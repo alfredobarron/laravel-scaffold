@@ -6,6 +6,13 @@
                     <i class="nav-icon icon-speedometer"></i> Dashboard
                 </a>
             </li>
+            @can('read-events')
+            <li class="nav-item">
+                <a class="nav-link" href="/events">
+                    <i class="nav-icon icon-calendar"></i> Eventos
+                </a>
+            </li>
+            @endcan
             @can('read-users','read-roles')
             <li class="nav-title">Settings</li>
             @endcan

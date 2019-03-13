@@ -30,6 +30,11 @@ class UserController extends Controller
         return $users;
     }
 
+    public function all()
+    {
+        return User::all();
+    }
+
     public function show ($user)
     {
         return User::findOrFail($user);
@@ -107,6 +112,4 @@ class UserController extends Controller
 
         return $user;
     }
-
-
 }

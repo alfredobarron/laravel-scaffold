@@ -49,13 +49,24 @@ class ProfileTableSeeder extends Seeder
             ]
         ]);
 
-        // Assign permissions to admin role
-        $admin = Role::findByName('admin');
-        $admin->givePermissionTo(Permission::all());
+        // Assign permissions
+        $master = Role::findByName('master');
+        $master->givePermissionTo('read-profile', 'update-profile', 'read-profile-password', 'update-profile-password');
 
-        // Assign permissions to user role
-        $user = Role::findByName('user');
-        $user->givePermissionTo('read-profile', 'update-profile', 'read-profile-password', 'update-profile-password');
+        $superadmin = Role::findByName('superadmin');
+        $superadmin->givePermissionTo('read-profile', 'update-profile', 'read-profile-password', 'update-profile-password');
+
+        $admin = Role::findByName('admin');
+        $admin->givePermissionTo('read-profile', 'update-profile', 'read-profile-password', 'update-profile-password');
+
+        $vendedor = Role::findByName('vendedor');
+        $vendedor->givePermissionTo('read-profile', 'update-profile', 'read-profile-password', 'update-profile-password');
+
+        $comediante = Role::findByName('comediante');
+        $comediante->givePermissionTo('read-profile', 'update-profile', 'read-profile-password', 'update-profile-password');
+
+        $viewer = Role::findByName('viewer');
+        $viewer->givePermissionTo('read-profile', 'update-profile', 'read-profile-password', 'update-profile-password');
 
     }
 }

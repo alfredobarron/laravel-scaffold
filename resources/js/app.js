@@ -12,13 +12,14 @@ window.Vue = require('vue');
 
 // Dependencies --------------------------------------
 
-import Toasted from 'vue-toasted';
+import Toasted from 'vue-toasted'
 import VueClip from 'vue-clip'
 import Multiselect from 'vue-multiselect'
-import swal from 'sweetalert';
+import swal from 'sweetalert'
 import VueContentPlaceholders from 'vue-content-placeholders'
+import { CalendarView, CalendarViewHeader } from "vue-simple-calendar"
 
-Vue.use(require('vue-moment'));
+Vue.use(require('vue-moment'))
 Vue.use(Toasted)
 Vue.toasted.register('error', message => message, {
     position : 'bottom-center',
@@ -27,6 +28,8 @@ Vue.toasted.register('error', message => message, {
 Vue.use(VueClip)
 Vue.component('multiselect', Multiselect)
 Vue.use(VueContentPlaceholders)
+Vue.component('calendar-view', CalendarView)
+Vue.component('calendar-view-header', CalendarViewHeader)
 
 
 /**
@@ -55,6 +58,9 @@ Vue.component('users-edit', require('./components/users/Edit.vue'));
 Vue.component('roles-index', require('./components/roles/Index.vue'));
 Vue.component('roles-create', require('./components/roles/Create.vue'));
 Vue.component('roles-edit', require('./components/roles/Edit.vue'));
+
+// Events
+Vue.component('events-index', require('./components/events/Index.vue'));
 
 const app = new Vue({
     el: '#app'
