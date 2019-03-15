@@ -13,6 +13,11 @@ class EventController extends Controller
         return Event::with('user')->get();
     }
 
+    public function byUser($userId)
+    {
+        return Event::with('user')->where('user_id', $userId)->get();
+    }
+
     public function store (Request $request)
     {
         $this->validate($request, [

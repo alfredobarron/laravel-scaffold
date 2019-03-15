@@ -2,9 +2,18 @@
   <div class="container">
     <div class="card-header px-0 mt-2 bg-transparent clearfix">
       <h4 class="float-left pt-2">Eventos</h4>
-      <!-- <div class="card-header-actions mr-1">
-        <a class="btn btn-success" href="#">Crear</a>
-      </div> -->
+      <div class="card-header-actions mr-1">
+        <!-- <a class="btn btn-success" href="#">Crear</a> -->
+        <multiselect
+          v-model="userCurrent"
+          :options="users"
+          openDirection="bottom"
+          track-by="id"
+          label="name"
+          @select="changeUser"
+          @remove="removeUser">
+        </multiselect>
+      </div>
     </div>
     <div class="card-body px-0">
       <div class="row">
@@ -87,14 +96,16 @@ export default {
     },
     events: [],
     users: [],
+    userCurrent: Laravel.user,
     errors: {},
     submiting: false,
     submitingDelete: false,
     action: 'Crear'
   }),
   mounted () {
-    this.getEvents()
+    //this.getEvents()
     this.getUsers()
+    this.getEventsByUser(this.userCurrent)
   },
   methods: {
     getUsers () {
@@ -114,6 +125,21 @@ export default {
       .catch(error => {
         this.errors = error.response.data.errors
       })
+    },
+    getEventsByUser (user) {
+      axios.get(`/api/events/byUser/${user.id}`)
+      .then(response => {
+        this.events = response.data
+      })
+      .catch(error => {
+        this.errors = error.response.data.errors
+      })
+    },
+    changeUser (user) {
+      this.getEventsByUser(user)
+    },
+    removeUser () {
+      this.getEvents()
     },
     setShowDate(d) {
       this.showDate = d

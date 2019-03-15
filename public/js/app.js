@@ -65018,6 +65018,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -65028,6 +65037,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       },
       events: [],
       users: [],
+      userCurrent: Laravel.user,
       errors: {},
       submiting: false,
       submitingDelete: false,
@@ -65035,8 +65045,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     };
   },
   mounted: function mounted() {
-    this.getEvents();
+    //this.getEvents()
     this.getUsers();
+    this.getEventsByUser(this.userCurrent);
   },
 
   methods: {
@@ -65058,6 +65069,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         _this2.errors = error.response.data.errors;
       });
     },
+    getEventsByUser: function getEventsByUser(user) {
+      var _this3 = this;
+
+      axios.get('/api/events/byUser/' + user.id).then(function (response) {
+        _this3.events = response.data;
+      }).catch(function (error) {
+        _this3.errors = error.response.data.errors;
+      });
+    },
+    changeUser: function changeUser(user) {
+      this.getEventsByUser(user);
+    },
+    removeUser: function removeUser() {
+      this.getEvents();
+    },
     setShowDate: function setShowDate(d) {
       this.showDate = d;
     },
@@ -65076,21 +65102,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       $('#eventModal').modal('show');
     },
     storeEvent: function storeEvent() {
-      var _this3 = this;
+      var _this4 = this;
 
       if (!this.submiting) {
         this.submiting = true;
         axios.post('/api/events/store', this.eventCurrent).then(function (response) {
-          _this3.events.push(response.data);
-          _this3.eventCurrent = {};
+          _this4.events.push(response.data);
+          _this4.eventCurrent = {};
           $('#eventModal').modal('hide');
-          _this3.$toasted.global.error('Evento creado!');
+          _this4.$toasted.global.error('Evento creado!');
         }).catch(function (error) {
           if (error.response) {
-            _this3.errors = error.response.data.errors;
+            _this4.errors = error.response.data.errors;
           }
         }).then(function (response) {
-          _this3.submiting = false;
+          _this4.submiting = false;
         });
       }
     },
@@ -65105,26 +65131,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       $('#eventModal').modal('show');
     },
     updateEvent: function updateEvent() {
-      var _this4 = this;
+      var _this5 = this;
 
       if (!this.submiting) {
         this.submiting = true;
         axios.put('/api/events/update/' + this.eventCurrent.id, this.eventCurrent).then(function (response) {
-          _this4.events[_this4.eventCurrent.index] = response.data;
-          _this4.eventCurrent = {};
+          _this5.events[_this5.eventCurrent.index] = response.data;
+          _this5.eventCurrent = {};
           $('#eventModal').modal('hide');
-          _this4.$toasted.global.error('Evento actualizado!');
+          _this5.$toasted.global.error('Evento actualizado!');
         }).catch(function (error) {
           if (error.response) {
-            _this4.errors = error.response.data.errors;
+            _this5.errors = error.response.data.errors;
           }
         }).then(function (response) {
-          _this4.submiting = false;
+          _this5.submiting = false;
         });
       }
     },
     deleteEvent: function deleteEvent() {
-      var _this5 = this;
+      var _this6 = this;
 
       if (!this.submitingDelete) {
         this.submitingDelete = true;
@@ -65136,15 +65162,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
           dangerMode: true
         }).then(function (willDelete) {
           if (willDelete) {
-            axios.delete('/api/events/' + _this5.eventCurrent.id).then(function (response) {
-              _this5.events.splice(_this5.eventCurrent.index, 1);
-              _this5.$toasted.global.error('Evento borrado!');
+            axios.delete('/api/events/' + _this6.eventCurrent.id).then(function (response) {
+              _this6.events.splice(_this6.eventCurrent.index, 1);
+              _this6.$toasted.global.error('Evento borrado!');
               $('#eventModal').modal('hide');
             }).catch(function (error) {
-              _this5.errors = error.response.data.errors;
+              _this6.errors = error.response.data.errors;
             });
           }
-          _this5.submitingDelete = false;
+          _this6.submitingDelete = false;
         });
       }
     }
@@ -69945,7 +69971,37 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _vm._m(0),
+    _c(
+      "div",
+      { staticClass: "card-header px-0 mt-2 bg-transparent clearfix" },
+      [
+        _c("h4", { staticClass: "float-left pt-2" }, [_vm._v("Eventos")]),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "card-header-actions mr-1" },
+          [
+            _c("multiselect", {
+              attrs: {
+                options: _vm.users,
+                openDirection: "bottom",
+                "track-by": "id",
+                label: "name"
+              },
+              on: { select: _vm.changeUser, remove: _vm.removeUser },
+              model: {
+                value: _vm.userCurrent,
+                callback: function($$v) {
+                  _vm.userCurrent = $$v
+                },
+                expression: "userCurrent"
+              }
+            })
+          ],
+          1
+        )
+      ]
+    ),
     _vm._v(" "),
     _c("div", { staticClass: "card-body px-0" }, [
       _c("div", { staticClass: "row" }, [
@@ -70002,7 +70058,7 @@ var render = function() {
                   _vm._v(_vm._s(_vm.action) + " Evento")
                 ]),
                 _vm._v(" "),
-                _vm._m(1)
+                _vm._m(0)
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "modal-body" }, [
@@ -70164,16 +70220,6 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      { staticClass: "card-header px-0 mt-2 bg-transparent clearfix" },
-      [_c("h4", { staticClass: "float-left pt-2" }, [_vm._v("Eventos")])]
-    )
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
