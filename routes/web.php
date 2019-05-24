@@ -30,3 +30,4 @@ require __DIR__ . '/roles/roles.php';
 require __DIR__ . '/roles/permissions.php';
 require __DIR__ . '/modules/modules.php';
 require __DIR__ . '/events/events.php';
+require __DIR__ . '/quotesCompanies/quotesCompanies.php';

@@ -25,6 +25,7 @@
                 </div>
                 @endcan
                 <div class="col-md-6">
+                    <a href="/quotes" class="text-decoration-none">
                     <div class="card">
                         <div class="card-body p-0 d-flex align-items-center">
                             <i class="fa fa-file bg-primary p-4 font-2xl mr-3"></i>
@@ -33,8 +34,10 @@
                             </div>
                         </div>
                     </div>
+                    </a>
                 </div>
                 <div class="col-md-6">
+                    <a href="/quotesCompanies" class="text-decoration-none">
                     <div class="card">
                         <div class="card-body p-0 d-flex align-items-center">
                             <i class="far fa-file bg-info p-4 font-2xl mr-3"></i>
@@ -43,6 +46,7 @@
                             </div>
                         </div>
                     </div>
+                    </a>
                 </div>
                 @can('read-users')
                 <div class="col-md-6">

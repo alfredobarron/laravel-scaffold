@@ -62,6 +62,11 @@ Vue.component('roles-edit', require('./components/roles/Edit.vue'));
 // Events
 Vue.component('events-index', require('./components/events/Index.vue'));
 
+// Quotes Companies
+Vue.component('quotes-companies-index', require('./components/quotesCompanies/Index.vue'));
+Vue.component('quotes-companies-create', require('./components/quotesCompanies/Create.vue'));
+Vue.component('quotes-companies-edit', require('./components/quotesCompanies/Edit.vue'));
+
 const app = new Vue({
     el: '#app'
 });
