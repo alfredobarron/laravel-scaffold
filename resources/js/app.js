@@ -67,6 +67,11 @@ Vue.component('quotes-companies-index', require('./components/quotesCompanies/In
 Vue.component('quotes-companies-create', require('./components/quotesCompanies/Create.vue'));
 Vue.component('quotes-companies-edit', require('./components/quotesCompanies/Edit.vue'));
 
+// Quotes
+Vue.component('quotes-index', require('./components/quotes/Index.vue'));
+Vue.component('quotes-create', require('./components/quotes/Create.vue'));
+Vue.component('quotes-edit', require('./components/quotes/Edit.vue'));
+
 const app = new Vue({
     el: '#app'
 });

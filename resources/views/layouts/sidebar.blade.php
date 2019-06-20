@@ -13,11 +13,20 @@
                 </a>
             </li>
             @endcan
+            @can('read-quotes')
+            <li class="nav-item">
+                <a class="nav-link" href="/quotes">
+                    <i class="nav-icon icon-note"></i> Cotizaciones
+                </a>
+            </li>
+            @endcan
+            @can('read-quotescompanies')
             <li class="nav-item">
                 <a class="nav-link" href="/quotesCompanies">
                     <i class="nav-icon icon-note"></i> Cotizaciones Empresa
                 </a>
             </li>
+            @endcan
             @can('read-users','read-roles')
             <li class="nav-title">Settings</li>
             @endcan

@@ -24,6 +24,7 @@
                     </a>
                 </div>
                 @endcan
+                @can('read-quotes')
                 <div class="col-md-6">
                     <a href="/quotes" class="text-decoration-none">
                     <div class="card">
@@ -36,6 +37,8 @@
                     </div>
                     </a>
                 </div>
+                @endcan
+                @can('read-quotescompanies')
                 <div class="col-md-6">
                     <a href="/quotesCompanies" class="text-decoration-none">
                     <div class="card">
@@ -48,6 +51,7 @@
                     </div>
                     </a>
                 </div>
+                @endcan
                 @can('read-users')
                 <div class="col-md-6">
                     <div class="card">

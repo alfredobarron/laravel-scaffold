@@ -1,9 +1,9 @@
 <template>
   <div class="container">
     <div class="card-header px-0 mt-2 bg-transparent clearfix">
-      <h4 class="float-left pt-2">Cotizaciones Empresa</h4>
+      <h4 class="float-left pt-2">Cotizaciones</h4>
       <div class="card-header-actions mr-1">
-        <a class="btn btn-success" href="/quotesCompanies/create">Nueva</a>
+        <a class="btn btn-success" href="/quotes/create">Nueva</a>
       </div>
     </div>
     <div class="card-body px-0">
@@ -38,15 +38,15 @@
               <i class="mr-1 fas" :class="{'fa-long-arrow-alt-down': filters.orderBy.column == 'id' && filters.orderBy.direction == 'asc', 'fa-long-arrow-alt-up': filters.orderBy.column == 'id' && filters.orderBy.direction == 'desc'}"></i>
             </th>
             <th>
-              <a href="#" class="text-dark" @click.prevent="sort('company')">Empresa</a>
-              <i class="mr-1 fas" :class="{'fa-long-arrow-alt-down': filters.orderBy.column == 'company' && filters.orderBy.direction == 'asc', 'fa-long-arrow-alt-up': filters.orderBy.column == 'company' && filters.orderBy.direction == 'desc'}"></i>
+              <a href="#" class="text-dark" @click.prevent="sort('place')">Cotizacion</a>
+              <i class="mr-1 fas" :class="{'fa-long-arrow-alt-down': filters.orderBy.column == 'place' && filters.orderBy.direction == 'asc', 'fa-long-arrow-alt-up': filters.orderBy.column == 'place' && filters.orderBy.direction == 'desc'}"></i>
             </th>
             <th>
-              <a href="#" class="text-dark" @click.prevent="sort('name')">Contacto</a>
-              <i class="mr-1 fas" :class="{'fa-long-arrow-alt-down': filters.orderBy.column == 'name' && filters.orderBy.direction == 'asc', 'fa-long-arrow-alt-up': filters.orderBy.column == 'name' && filters.orderBy.direction == 'desc'}"></i>
+              <a href="#" class="text-dark" @click.prevent="sort('client')">Contacto</a>
+              <i class="mr-1 fas" :class="{'fa-long-arrow-alt-down': filters.orderBy.column == 'client' && filters.orderBy.direction == 'asc', 'fa-long-arrow-alt-up': filters.orderBy.column == 'client' && filters.orderBy.direction == 'desc'}"></i>
             </th>
             <th>
-              Teléfonos
+              Teléfono
             </th>
             <th class="d-none d-sm-table-cell"></th>
           </tr>
@@ -55,18 +55,17 @@
           <tr v-for="quote in quotes" @click="editQuote(quote.id)">
             <td class="d-none d-sm-table-cell">{{quote.id}}</td>
             <td>
-              <div>{{quote.company}}</div>
-              <div class="small text-muted">{{quote.address}}</div>
+              <div>{{quote.place}}</div>
+              <div class="small text-muted">{{quote.schedule}}</div>
             </td>
             <td>
-              <div>{{quote.name}}</div>
+              <div>{{quote.client}}</div>
               <div class="small text-muted">
-                {{quote.email}}
+                {{quote.client_email}}
               </div>
             </td>
             <td class="d-none d-sm-table-cell">
-              <div class="small" v-if="quote.phone"><i class="fas fa-phone mr-1"></i>{{quote.phone}}</div>
-              <div class="small" v-if="quote.cellphone"><i class="fas fa-mobile-alt mr-1"></i>{{quote.cellphone}}</div>
+              <div class="small" v-if="quote.client_phone"><i class="fas fa-phone mr-1"></i>{{quote.client_phone}}</div>
             </td>
             <td class="d-none d-sm-table-cell">
               <a href="#" class="text-muted"><i class="fas fa-pencil-alt"></i></a>
@@ -99,7 +98,7 @@
         <i class="icon-magnifier fa-3x text-muted"></i>
         <p class="mb-0 mt-3"><strong>Could not find any items</strong></p>
         <p class="text-muted">Try changing the filters or add a new one</p>
-        <a class="btn btn-success" href="/quotesCompanies/create" role="button">
+        <a class="btn btn-success" href="/quotes/create" role="button">
           <i class="fa fa-plus mr-1"></i>Nueva
         </a>
       </div>
@@ -134,10 +133,10 @@ export default {
     }
   },
   mounted () {
-    if (localStorage.getItem("filtersTableQuotesCompanies")) {
-      this.filters = JSON.parse(localStorage.getItem("filtersTableQuotesCompanies"))
+    if (localStorage.getItem("filtersTableQuotes")) {
+      this.filters = JSON.parse(localStorage.getItem("filtersTableQuotes"))
     } else {
-      localStorage.setItem("filtersTableQuotesCompanies", this.filters);
+      localStorage.setItem("filtersTableQuotes", this.filters);
     }
     this.getQuotes()
   },
@@ -146,9 +145,9 @@ export default {
       this.loading = true
       this.quotes = []
 
-      localStorage.setItem("filtersTableQuotesCompanies", JSON.stringify(this.filters));
+      localStorage.setItem("filtersTableQuotes", JSON.stringify(this.filters));
 
-      axios.post(`/api/quotesCompanies/filter?page=${this.filters.pagination.current_page}`, this.filters)
+      axios.post(`/api/quotes/filter?page=${this.filters.pagination.current_page}`, this.filters)
       .then(response => {
         this.quotes = response.data.data
         delete response.data.data
@@ -157,7 +156,7 @@ export default {
       })
     },
     editQuote (quoteId) {
-      location.href = `/quotesCompanies/${quoteId}/edit`
+      location.href = `/quotes/${quoteId}/edit`
     },
     // filters
     filter() {
