@@ -24,11 +24,35 @@ class QuotesController extends Controller
 
     public function show ($quote)
     {
-        return Quotes::findOrFail($quote);
+        return Quotes::with('artist', 'agent')->findOrFail($quote);
     }
 
     public function store (Request $request)
     {
+        $this->validate($request, [
+            'type' => 'required',
+            'capacity' => 'required|string',
+            'schedule' => 'required|date',
+            'place' => 'required|string',
+            'origin' => 'required|string',
+            'client' => 'required|string',
+            'client_email' => 'required|email',
+            'client_phone' => 'required|string',
+            'artist' => 'required',
+            'artist_cost' => 'required|string',
+            'agent' => 'required',
+            'agent_phone' => 'required|string',
+            'event_coordination' => 'required|string',
+            'sound_installation' => 'required|string',
+            'sold' => 'required|string',
+            'invoice_required' => 'required|string',
+            'number_invoices' => 'required|string',
+            'method_payment' => 'required|string',
+            'payment_dates' => 'required|string',
+            'status' => 'required|string',
+            'notes' => 'required|string',
+        ]);
+
         $quote = Quotes::create([
             'type' => $request->type,
             'capacity' => $request->capacity,
@@ -38,9 +62,9 @@ class QuotesController extends Controller
             'client' => $request->client,
             'client_email' => $request->client_email,
             'client_phone' => $request->client_phone,
-            'artist' => $request->artist,
+            'artist_id' => $request->artist['id'],
             'artist_cost' => $request->artist_cost,
-            'agent' => $request->agent,
+            'agent_id' => $request->agent['id'],
             'agent_phone' => $request->agent_phone,
             'event_coordination' => $request->event_coordination,
             'sound_installation' => $request->sound_installation,
@@ -49,6 +73,8 @@ class QuotesController extends Controller
             'number_invoices' => $request->number_invoices,
             'method_payment' => $request->method_payment,
             'payment_dates' => $request->payment_dates,
+            'status' => $request->status,
+            'notes' => $request->notes,
             'hotel' => $request->hotel,
             'numbre_rooms' => $request->numbre_rooms,
             'type_rooms' => $request->type_rooms,
@@ -60,9 +86,7 @@ class QuotesController extends Controller
             'camerino' => $request->camerino,
             'rider' => $request->rider,
             'distribution_courtesies' => $request->distribution_courtesies,
-            'coordinator_budget' => $request->coordinator_budget,
-            'notes' => $request->notes,
-            'status' => $request->status
+            'coordinator_budget' => $request->coordinator_budget
         ]);
 
         return Quotes::find($quote->id);
@@ -70,6 +94,30 @@ class QuotesController extends Controller
 
     public function update (Request $request)
     {
+        $this->validate($request, [
+            'type' => 'required',
+            'capacity' => 'required|string',
+            'schedule' => 'required|date',
+            'place' => 'required|string',
+            'origin' => 'required|string',
+            'client' => 'required|string',
+            'client_email' => 'required|email',
+            'client_phone' => 'required|string',
+            'artist' => 'required',
+            'artist_cost' => 'required|string',
+            'agent' => 'required',
+            'agent_phone' => 'required|string',
+            'event_coordination' => 'required|string',
+            'sound_installation' => 'required|string',
+            'sold' => 'required|string',
+            'invoice_required' => 'required|string',
+            'number_invoices' => 'required|string',
+            'method_payment' => 'required|string',
+            'payment_dates' => 'required|string',
+            'status' => 'required|string',
+            'notes' => 'required|string',
+        ]);
+
         $quote = Quotes::find($request->id);
         $quote->type = $request->type;
         $quote->capacity = $request->capacity;
@@ -79,9 +127,9 @@ class QuotesController extends Controller
         $quote->client = $request->client;
         $quote->client_email = $request->client_email;
         $quote->client_phone = $request->client_phone;
-        $quote->artist = $request->artist;
+        $quote->artist_id = $request->artist['id'];
         $quote->artist_cost = $request->artist_cost;
-        $quote->agent = $request->agent;
+        $quote->agent_id = $request->agent['id'];
         $quote->agent_phone = $request->agent_phone;
         $quote->event_coordination = $request->event_coordination;
         $quote->sound_installation = $request->sound_installation;

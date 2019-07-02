@@ -8,7 +8,7 @@ use Wildside\Userstamps\Userstamps;
 class Event extends Model
 {
     use Userstamps;
-    
+
     protected $guarded = ['id'];
 
     protected $appends = ['startDate'];
