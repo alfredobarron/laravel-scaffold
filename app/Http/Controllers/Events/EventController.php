@@ -10,48 +10,80 @@ class EventController extends Controller
 {
     public function all()
     {
-        return Event::with('user')->get();
+        return Event::with('artist')->get();
     }
 
     public function byUser($userId)
     {
-        return Event::with('user')->where('user_id', $userId)->get();
+        return Event::with('artist')->where('artist_id', $userId)->get();
     }
 
     public function store (Request $request)
     {
         $this->validate($request, [
-            'date' => 'required|date',
             'description' => 'required|string',
-            'user' => 'required'
+            'schedule' => 'required|date',
+            'capacity' => 'required|string',
+            'place' => 'required|string',
+            'client' => 'required|string',
+            'client_email' => 'required|email',
+            'client_phone' => 'required|string',
+            'artist' => 'required',
+            'sound_installation' => 'required|string',
+            'sold' => 'required|string',
+            'invoice_required' => 'required|string'
         ]);
 
         $event = Event::create([
-            'date' => $request->date,
-            'title' => $request->user['name'],
+            'title' => $request->artist['name'],
             'description' => $request->description,
-            'user_id' => $request->user['id']
+            'schedule' => $request->schedule,
+            'capacity' => $request->capacity,
+            'place' => $request->place,
+            'client' => $request->client,
+            'client_email' => $request->client_email,
+            'client_phone' => $request->client_phone,
+            'artist_id' => $request->artist['id'],
+            'sound_installation' => $request->sound_installation,
+            'sold' => $request->sold,
+            'invoice_required' => $request->invoice_required,
         ]);
 
-        return Event::with('user')->find($event->id);
+        return Event::with('artist')->find($event->id);
     }
 
     public function update (Request $request)
     {
         $this->validate($request, [
-            'date' => 'required|date',
             'description' => 'required|string',
-            'user' => 'required'
+            'schedule' => 'required|date',
+            'capacity' => 'required|string',
+            'place' => 'required|string',
+            'client' => 'required|string',
+            'client_email' => 'required|email',
+            'client_phone' => 'required|string',
+            'artist' => 'required',
+            'sound_installation' => 'required|string',
+            'sold' => 'required|string',
+            'invoice_required' => 'required|string'
         ]);
 
         $event = Event::find($request->id);
-        $event->date = $request->date;
-        $event->title = $request->user['name'];
+        $event->title = $request->artist['name'];
         $event->description = $request->description;
-        $event->user_id = $request->user['id'];
+        $event->schedule = $request->schedule;
+        $event->capacity = $request->capacity;
+        $event->place = $request->place;
+        $event->client = $request->client;
+        $event->client_email = $request->client_email;
+        $event->client_phone = $request->client_phone;
+        $event->artist_id = $request->artist['id'];
+        $event->sound_installation = $request->sound_installation;
+        $event->sold = $request->sold;
+        $event->invoice_required = $request->invoice_required;
         $event->save();
 
-        return Event::with('user')->find($event->id);
+        return Event::with('artist')->find($event->id);
     }
 
     public function destroy ($user)

@@ -69822,13 +69822,59 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       showDate: new Date(),
       eventCurrent: {
-        date: Vue.moment().format('YYYY-MM-DD')
+        schedule: Vue.moment().format('YYYY-MM-DDTHH:mm')
       },
       events: [],
       users: [],
@@ -69893,7 +69939,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.action = 'Crear';
       this.errors = {};
       this.eventCurrent = {};
-      this.eventCurrent.date = Vue.moment(d).format('YYYY-MM-DD');
+      //this.eventCurrent.schedule = Vue.moment(d).format('YYYY-MM-DD')
+      this.eventCurrent.schedule = Vue.moment(d).format('YYYY-MM-DDTHH:mm');
       $('#eventModal').modal('show');
     },
     storeEvent: function storeEvent() {
@@ -69919,7 +69966,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.action = 'Editar';
       this.errors = {};
       this.eventCurrent = e.originalEvent;
-      this.eventCurrent.date = e.originalEvent.date;
+      this.eventCurrent.schedule = Vue.moment(e.originalEvent.schedule).format('YYYY-MM-DDTHH:mm');
       this.eventCurrent.index = this.events.findIndex(function (x) {
         return x.id === e.originalEvent.id;
       });
@@ -69932,6 +69979,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         this.submiting = true;
         axios.put('/api/events/update/' + this.eventCurrent.id, this.eventCurrent).then(function (response) {
           _this5.events[_this5.eventCurrent.index] = response.data;
+          _this5.events[_this5.eventCurrent.index].schedule = Vue.moment(response.data.schedule).format('YYYY-MM-DDTHH:mm');
           _this5.eventCurrent = {};
           $('#eventModal').modal('hide');
           _this5.$toasted.global.error('Evento actualizado!');
@@ -70073,34 +70121,219 @@ var render = function() {
               _vm._v(" "),
               _c("div", { staticClass: "modal-body" }, [
                 _c("div", { staticClass: "form-group" }, [
-                  _c("label", [_vm._v("Fecha")]),
+                  _c("label", [_vm._v("Nombre del cliente *")]),
                   _vm._v(" "),
                   _c("input", {
                     directives: [
                       {
                         name: "model",
                         rawName: "v-model",
-                        value: _vm.eventCurrent.date,
-                        expression: "eventCurrent.date"
+                        value: _vm.eventCurrent.client,
+                        expression: "eventCurrent.client"
                       }
                     ],
                     staticClass: "form-control",
-                    class: { "is-invalid": _vm.errors.date },
-                    attrs: { type: "date" },
-                    domProps: { value: _vm.eventCurrent.date },
+                    class: { "is-invalid": _vm.errors.client },
+                    attrs: { type: "text" },
+                    domProps: { value: _vm.eventCurrent.client },
                     on: {
                       input: function($event) {
                         if ($event.target.composing) {
                           return
                         }
-                        _vm.$set(_vm.eventCurrent, "date", $event.target.value)
+                        _vm.$set(
+                          _vm.eventCurrent,
+                          "client",
+                          $event.target.value
+                        )
                       }
                     }
                   }),
                   _vm._v(" "),
-                  _vm.errors.date
+                  _vm.errors.client
                     ? _c("div", { staticClass: "invalid-feedback" }, [
-                        _vm._v(_vm._s(_vm.errors.date[0]))
+                        _vm._v(_vm._s(_vm.errors.client[0]))
+                      ])
+                    : _vm._e()
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", [_vm._v("Teléfono del cliente *")]),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.eventCurrent.client_phone,
+                        expression: "eventCurrent.client_phone"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    class: { "is-invalid": _vm.errors.client_phone },
+                    attrs: { type: "text" },
+                    domProps: { value: _vm.eventCurrent.client_phone },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(
+                          _vm.eventCurrent,
+                          "client_phone",
+                          $event.target.value
+                        )
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _vm.errors.client_phone
+                    ? _c("div", { staticClass: "invalid-feedback" }, [
+                        _vm._v(_vm._s(_vm.errors.client_phone[0]))
+                      ])
+                    : _vm._e()
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", [_vm._v("Correo del cliente *")]),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.eventCurrent.client_email,
+                        expression: "eventCurrent.client_email"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    class: { "is-invalid": _vm.errors.client_email },
+                    attrs: { type: "text" },
+                    domProps: { value: _vm.eventCurrent.client_email },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(
+                          _vm.eventCurrent,
+                          "client_email",
+                          $event.target.value
+                        )
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _vm.errors.client_email
+                    ? _c("div", { staticClass: "invalid-feedback" }, [
+                        _vm._v(_vm._s(_vm.errors.client_email[0]))
+                      ])
+                    : _vm._e()
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", [_vm._v("Fecha *")]),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.eventCurrent.schedule,
+                        expression: "eventCurrent.schedule"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    class: { "is-invalid": _vm.errors.schedule },
+                    attrs: { type: "datetime-local" },
+                    domProps: { value: _vm.eventCurrent.schedule },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(
+                          _vm.eventCurrent,
+                          "schedule",
+                          $event.target.value
+                        )
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _vm.errors.schedule
+                    ? _c("div", { staticClass: "invalid-feedback" }, [
+                        _vm._v(_vm._s(_vm.errors.schedule[0]))
+                      ])
+                    : _vm._e()
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", [_vm._v("Aforo del evento *")]),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.eventCurrent.capacity,
+                        expression: "eventCurrent.capacity"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    class: { "is-invalid": _vm.errors.capacity },
+                    attrs: { type: "text" },
+                    domProps: { value: _vm.eventCurrent.capacity },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(
+                          _vm.eventCurrent,
+                          "capacity",
+                          $event.target.value
+                        )
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _vm.errors.capacity
+                    ? _c("div", { staticClass: "invalid-feedback" }, [
+                        _vm._v(_vm._s(_vm.errors.capacity[0]))
+                      ])
+                    : _vm._e()
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", [_vm._v("Lugar *")]),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.eventCurrent.place,
+                        expression: "eventCurrent.place"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    class: { "is-invalid": _vm.errors.place },
+                    attrs: { type: "text" },
+                    domProps: { value: _vm.eventCurrent.place },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.eventCurrent, "place", $event.target.value)
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _vm.errors.place
+                    ? _c("div", { staticClass: "invalid-feedback" }, [
+                        _vm._v(_vm._s(_vm.errors.place[0]))
                       ])
                     : _vm._e()
                 ]),
@@ -70109,11 +70342,11 @@ var render = function() {
                   "div",
                   { staticClass: "form-group" },
                   [
-                    _c("label", [_vm._v("Comediante")]),
+                    _c("label", [_vm._v("Artista *")]),
                     _vm._v(" "),
                     _c("multiselect", {
                       class: {
-                        "border border-danger rounded": _vm.errors.user
+                        "border border-danger rounded": _vm.errors.artist
                       },
                       attrs: {
                         options: _vm.users,
@@ -70122,17 +70355,17 @@ var render = function() {
                         label: "name"
                       },
                       model: {
-                        value: _vm.eventCurrent.user,
+                        value: _vm.eventCurrent.artist,
                         callback: function($$v) {
-                          _vm.$set(_vm.eventCurrent, "user", $$v)
+                          _vm.$set(_vm.eventCurrent, "artist", $$v)
                         },
-                        expression: "eventCurrent.user"
+                        expression: "eventCurrent.artist"
                       }
                     }),
                     _vm._v(" "),
-                    _vm.errors.user
+                    _vm.errors.artist
                       ? _c("small", { staticClass: "form-text text-danger" }, [
-                          _vm._v(_vm._s(_vm.errors.user[0]))
+                          _vm._v(_vm._s(_vm.errors.artist[0]))
                         ])
                       : _vm._e()
                   ],
@@ -70140,7 +70373,140 @@ var render = function() {
                 ),
                 _vm._v(" "),
                 _c("div", { staticClass: "form-group" }, [
-                  _c("label", [_vm._v("Descripcion")]),
+                  _c("label", [_vm._v("Instalacion de sonido *")]),
+                  _vm._v(" "),
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.eventCurrent.sound_installation,
+                          expression: "eventCurrent.sound_installation"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      class: { "is-invalid": _vm.errors.sound_installation },
+                      on: {
+                        change: function($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function(o) {
+                              return o.selected
+                            })
+                            .map(function(o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.$set(
+                            _vm.eventCurrent,
+                            "sound_installation",
+                            $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          )
+                        }
+                      }
+                    },
+                    [
+                      _c("option", { attrs: { value: "Si" } }, [_vm._v("Si")]),
+                      _vm._v(" "),
+                      _c("option", { attrs: { value: "No" } }, [_vm._v("No")])
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _vm.errors.sound_installation
+                    ? _c("div", { staticClass: "invalid-feedback" }, [
+                        _vm._v(_vm._s(_vm.errors.sound_installation[0]))
+                      ])
+                    : _vm._e()
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", [_vm._v("Vendido *")]),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.eventCurrent.sold,
+                        expression: "eventCurrent.sold"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    class: { "is-invalid": _vm.errors.sold },
+                    attrs: { type: "text" },
+                    domProps: { value: _vm.eventCurrent.sold },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.eventCurrent, "sold", $event.target.value)
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _vm.errors.sold
+                    ? _c("div", { staticClass: "invalid-feedback" }, [
+                        _vm._v(_vm._s(_vm.errors.sold[0]))
+                      ])
+                    : _vm._e()
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", [_vm._v("Requiere Factura *")]),
+                  _vm._v(" "),
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.eventCurrent.invoice_required,
+                          expression: "eventCurrent.invoice_required"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      class: { "is-invalid": _vm.errors.invoice_required },
+                      on: {
+                        change: function($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function(o) {
+                              return o.selected
+                            })
+                            .map(function(o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.$set(
+                            _vm.eventCurrent,
+                            "invoice_required",
+                            $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          )
+                        }
+                      }
+                    },
+                    [
+                      _c("option", { attrs: { value: "Si" } }, [_vm._v("Si")]),
+                      _vm._v(" "),
+                      _c("option", { attrs: { value: "No" } }, [_vm._v("No")])
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _vm.errors.invoice_required
+                    ? _c("div", { staticClass: "invalid-feedback" }, [
+                        _vm._v(_vm._s(_vm.errors.invoice_required[0]))
+                      ])
+                    : _vm._e()
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", [_vm._v("Descripcion *")]),
                   _vm._v(" "),
                   _c("textarea", {
                     directives: [

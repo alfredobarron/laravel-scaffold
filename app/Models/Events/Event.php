@@ -13,13 +13,13 @@ class Event extends Model
 
     protected $appends = ['startDate'];
 
-    public function user()
+    public function artist()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo('App\User', 'artist_id');
     }
 
     public function getstartDateAttribute()
     {
-        return $this->attributes['date'];
+        return $this->attributes['schedule'];
     }
 }

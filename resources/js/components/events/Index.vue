@@ -47,24 +47,70 @@
           </div>
           <div class="modal-body">
             <div class="form-group">
-              <label>Fecha</label>
-              <input type="date" class="form-control" :class="{'is-invalid': errors.date}" v-model="eventCurrent.date">
-              <div class="invalid-feedback" v-if="errors.date">{{errors.date[0]}}</div>
+              <label>Nombre del cliente *</label>
+              <input type="text" class="form-control" :class="{'is-invalid': errors.client}" v-model="eventCurrent.client">
+              <div class="invalid-feedback" v-if="errors.client">{{errors.client[0]}}</div>
             </div>
             <div class="form-group">
-              <label>Comediante</label>
+              <label>Teléfono del cliente *</label>
+              <input type="text" class="form-control" :class="{'is-invalid': errors.client_phone}" v-model="eventCurrent.client_phone">
+              <div class="invalid-feedback" v-if="errors.client_phone">{{errors.client_phone[0]}}</div>
+            </div>
+            <div class="form-group">
+              <label>Correo del cliente *</label>
+              <input type="text" class="form-control" :class="{'is-invalid': errors.client_email}" v-model="eventCurrent.client_email">
+              <div class="invalid-feedback" v-if="errors.client_email">{{errors.client_email[0]}}</div>
+            </div>
+            <div class="form-group">
+              <label>Fecha *</label>
+              <input type="datetime-local" class="form-control" :class="{'is-invalid': errors.schedule}" v-model="eventCurrent.schedule">
+              <div class="invalid-feedback" v-if="errors.schedule">{{errors.schedule[0]}}</div>
+            </div>
+            <div class="form-group">
+              <label>Aforo del evento *</label>
+              <input type="text" class="form-control" :class="{'is-invalid': errors.capacity}" v-model="eventCurrent.capacity">
+              <div class="invalid-feedback" v-if="errors.capacity">{{errors.capacity[0]}}</div>
+            </div>
+            <div class="form-group">
+              <label>Lugar *</label>
+              <input type="text" class="form-control" :class="{'is-invalid': errors.place}" v-model="eventCurrent.place">
+              <div class="invalid-feedback" v-if="errors.place">{{errors.place[0]}}</div>
+            </div>
+            <div class="form-group">
+              <label>Artista *</label>
               <multiselect
-                v-model="eventCurrent.user"
+                v-model="eventCurrent.artist"
                 :options="users"
                 openDirection="bottom"
                 track-by="id"
                 label="name"
-                :class="{'border border-danger rounded': errors.user}">
+                :class="{'border border-danger rounded': errors.artist}">
               </multiselect>
-              <small class="form-text text-danger" v-if="errors.user">{{errors.user[0]}}</small>
+              <small class="form-text text-danger" v-if="errors.artist">{{errors.artist[0]}}</small>
             </div>
             <div class="form-group">
-              <label>Descripcion</label>
+              <label>Instalacion de sonido *</label>
+              <select class="form-control" :class="{'is-invalid': errors.sound_installation}" v-model="eventCurrent.sound_installation">
+                <option value="Si">Si</option>
+                <option value="No">No</option>
+              </select>
+              <div class="invalid-feedback" v-if="errors.sound_installation">{{errors.sound_installation[0]}}</div>
+            </div>
+            <div class="form-group">
+              <label>Vendido *</label>
+              <input type="text" class="form-control" :class="{'is-invalid': errors.sold}" v-model="eventCurrent.sold">
+              <div class="invalid-feedback" v-if="errors.sold">{{errors.sold[0]}}</div>
+            </div>
+            <div class="form-group">
+              <label>Requiere Factura *</label>
+              <select class="form-control" :class="{'is-invalid': errors.invoice_required}" v-model="eventCurrent.invoice_required">
+                <option value="Si">Si</option>
+                <option value="No">No</option>
+              </select>
+              <div class="invalid-feedback" v-if="errors.invoice_required">{{errors.invoice_required[0]}}</div>
+            </div>
+            <div class="form-group">
+              <label>Descripcion *</label>
               <textarea class="form-control" rows="5" :class="{'is-invalid': errors.description}" v-model="eventCurrent.description" placeholder="Información del evento"></textarea>
               <div class="invalid-feedback" v-if="errors.description">{{errors.description[0]}}</div>
             </div>
@@ -92,7 +138,7 @@ export default {
   data: () => ({
     showDate: new Date(),
     eventCurrent: {
-      date: Vue.moment().format('YYYY-MM-DD')
+      schedule: Vue.moment().format('YYYY-MM-DDTHH:mm')
     },
     events: [],
     users: [],
@@ -155,7 +201,8 @@ export default {
       this.action = 'Crear'
       this.errors = {}
       this.eventCurrent= {}
-      this.eventCurrent.date = Vue.moment(d).format('YYYY-MM-DD')
+      //this.eventCurrent.schedule = Vue.moment(d).format('YYYY-MM-DD')
+      this.eventCurrent.schedule = Vue.moment(d).format('YYYY-MM-DDTHH:mm')
       $('#eventModal').modal('show')
     },
     storeEvent () {
@@ -182,7 +229,7 @@ export default {
       this.action = 'Editar'
       this.errors = {}
       this.eventCurrent = e.originalEvent
-      this.eventCurrent.date = e.originalEvent.date
+      this.eventCurrent.schedule = Vue.moment(e.originalEvent.schedule).format('YYYY-MM-DDTHH:mm')
       this.eventCurrent.index = this.events.findIndex(x => x.id === e.originalEvent.id)
       $('#eventModal').modal('show')
     },
@@ -192,6 +239,7 @@ export default {
         axios.put(`/api/events/update/${this.eventCurrent.id}`, this.eventCurrent)
         .then(response => {
           this.events[this.eventCurrent.index] = response.data
+          this.events[this.eventCurrent.index].schedule = Vue.moment(response.data.schedule).format('YYYY-MM-DDTHH:mm')
           this.eventCurrent = {}
           $('#eventModal').modal('hide')
           this.$toasted.global.error('Evento actualizado!')
