@@ -34,8 +34,13 @@
                 <div class="invalid-feedback" v-if="errors.capacity">{{errors.capacity[0]}}</div>
               </div>
               <div class="form-group">
+                <label>Fecha *</label>
+                <input type="date" class="form-control" :class="{'is-invalid': errors.date}" v-model="quote.date">
+                <div class="invalid-feedback" v-if="errors.date">{{errors.date[0]}}</div>
+              </div>
+              <div class="form-group">
                 <label>Horario *</label>
-                <input type="datetime-local" class="form-control" :class="{'is-invalid': errors.schedule}" v-model="quote.schedule">
+                <input type="text" class="form-control" :class="{'is-invalid': errors.schedule}" v-model="quote.schedule">
                 <div class="invalid-feedback" v-if="errors.schedule">{{errors.schedule[0]}}</div>
               </div>
               <div class="form-group">

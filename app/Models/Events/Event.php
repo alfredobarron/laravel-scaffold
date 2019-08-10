@@ -20,6 +20,6 @@ class Event extends Model
 
     public function getstartDateAttribute()
     {
-        return $this->attributes['schedule'];
+        return $this->attributes['date'];
     }
 }

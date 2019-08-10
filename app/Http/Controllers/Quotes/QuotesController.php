@@ -32,7 +32,8 @@ class QuotesController extends Controller
         $this->validate($request, [
             'type' => 'required',
             'capacity' => 'required|string',
-            'schedule' => 'required|date',
+            'date' => 'required|date',
+            'schedule' => 'required|string',
             'place' => 'required|string',
             'origin' => 'required|string',
             'client' => 'required|string',
@@ -56,6 +57,7 @@ class QuotesController extends Controller
         $quote = Quotes::create([
             'type' => $request->type,
             'capacity' => $request->capacity,
+            'date' => $request->date,
             'schedule' => $request->schedule,
             'place' => $request->place,
             'origin' => $request->origin,
@@ -97,7 +99,8 @@ class QuotesController extends Controller
         $this->validate($request, [
             'type' => 'required',
             'capacity' => 'required|string',
-            'schedule' => 'required|date',
+            'date' => 'required|date',
+            'schedule' => 'required|string',
             'place' => 'required|string',
             'origin' => 'required|string',
             'client' => 'required|string',
@@ -121,6 +124,7 @@ class QuotesController extends Controller
         $quote = Quotes::find($request->id);
         $quote->type = $request->type;
         $quote->capacity = $request->capacity;
+        $quote->date = $request->date;
         $quote->schedule = $request->schedule;
         $quote->place = $request->place;
         $quote->origin = $request->origin;

@@ -65,8 +65,8 @@
               </div>
             </td>
             <td class="d-none d-sm-table-cell">
-              <div class="small" v-if="quote.phone"><i class="fas fa-phone mr-1"></i>{{quote.phone}}</div>
-              <div class="small" v-if="quote.cellphone"><i class="fas fa-mobile-alt mr-1"></i>{{quote.cellphone}}</div>
+              <div class="small" v-if="quote.phone">{{quote.phone}}</div>
+              <div class="small" v-if="quote.cellphone">{{quote.cellphone}}</div>
             </td>
             <td class="d-none d-sm-table-cell">
               <a href="#" class="text-muted"><i class="fas fa-pencil-alt"></i></a>

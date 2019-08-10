@@ -56,7 +56,7 @@
             <td class="d-none d-sm-table-cell">{{quote.id}}</td>
             <td>
               <div>{{quote.place}}</div>
-              <div class="small text-muted">{{quote.schedule}}</div>
+              <div class="small text-muted">{{quote.date}}</div>
             </td>
             <td>
               <div>{{quote.client}}</div>
@@ -65,7 +65,7 @@
               </div>
             </td>
             <td class="d-none d-sm-table-cell">
-              <div class="small" v-if="quote.client_phone"><i class="fas fa-phone mr-1"></i>{{quote.client_phone}}</div>
+              <div class="small" v-if="quote.client_phone">{{quote.client_phone}}</div>
             </td>
             <td class="d-none d-sm-table-cell">
               <a href="#" class="text-muted"><i class="fas fa-pencil-alt"></i></a>

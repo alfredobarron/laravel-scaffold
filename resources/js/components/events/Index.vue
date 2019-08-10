@@ -46,73 +46,124 @@
             </button>
           </div>
           <div class="modal-body">
-            <div class="form-group">
-              <label>Nombre del cliente *</label>
-              <input type="text" class="form-control" :class="{'is-invalid': errors.client}" v-model="eventCurrent.client">
-              <div class="invalid-feedback" v-if="errors.client">{{errors.client[0]}}</div>
-            </div>
-            <div class="form-group">
-              <label>Teléfono del cliente *</label>
-              <input type="text" class="form-control" :class="{'is-invalid': errors.client_phone}" v-model="eventCurrent.client_phone">
-              <div class="invalid-feedback" v-if="errors.client_phone">{{errors.client_phone[0]}}</div>
-            </div>
-            <div class="form-group">
-              <label>Correo del cliente *</label>
-              <input type="text" class="form-control" :class="{'is-invalid': errors.client_email}" v-model="eventCurrent.client_email">
-              <div class="invalid-feedback" v-if="errors.client_email">{{errors.client_email[0]}}</div>
-            </div>
-            <div class="form-group">
-              <label>Fecha *</label>
-              <input type="datetime-local" class="form-control" :class="{'is-invalid': errors.schedule}" v-model="eventCurrent.schedule">
-              <div class="invalid-feedback" v-if="errors.schedule">{{errors.schedule[0]}}</div>
-            </div>
-            <div class="form-group">
-              <label>Aforo del evento *</label>
-              <input type="text" class="form-control" :class="{'is-invalid': errors.capacity}" v-model="eventCurrent.capacity">
-              <div class="invalid-feedback" v-if="errors.capacity">{{errors.capacity[0]}}</div>
-            </div>
-            <div class="form-group">
-              <label>Lugar *</label>
-              <input type="text" class="form-control" :class="{'is-invalid': errors.place}" v-model="eventCurrent.place">
-              <div class="invalid-feedback" v-if="errors.place">{{errors.place[0]}}</div>
-            </div>
-            <div class="form-group">
-              <label>Artista *</label>
-              <multiselect
-                v-model="eventCurrent.artist"
-                :options="users"
-                openDirection="bottom"
-                track-by="id"
-                label="name"
-                :class="{'border border-danger rounded': errors.artist}">
-              </multiselect>
-              <small class="form-text text-danger" v-if="errors.artist">{{errors.artist[0]}}</small>
-            </div>
-            <div class="form-group">
-              <label>Instalacion de sonido *</label>
-              <select class="form-control" :class="{'is-invalid': errors.sound_installation}" v-model="eventCurrent.sound_installation">
-                <option value="Si">Si</option>
-                <option value="No">No</option>
-              </select>
-              <div class="invalid-feedback" v-if="errors.sound_installation">{{errors.sound_installation[0]}}</div>
-            </div>
-            <div class="form-group">
-              <label>Vendido *</label>
-              <input type="text" class="form-control" :class="{'is-invalid': errors.sold}" v-model="eventCurrent.sold">
-              <div class="invalid-feedback" v-if="errors.sold">{{errors.sold[0]}}</div>
-            </div>
-            <div class="form-group">
-              <label>Requiere Factura *</label>
-              <select class="form-control" :class="{'is-invalid': errors.invoice_required}" v-model="eventCurrent.invoice_required">
-                <option value="Si">Si</option>
-                <option value="No">No</option>
-              </select>
-              <div class="invalid-feedback" v-if="errors.invoice_required">{{errors.invoice_required[0]}}</div>
-            </div>
-            <div class="form-group">
-              <label>Descripcion *</label>
-              <textarea class="form-control" rows="5" :class="{'is-invalid': errors.description}" v-model="eventCurrent.description" placeholder="Información del evento"></textarea>
-              <div class="invalid-feedback" v-if="errors.description">{{errors.description[0]}}</div>
+            <ul class="nav nav-pills nav-fill" id="myTab" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" id="event-tab" data-toggle="tab" href="#event" role="tab" aria-controls="event" aria-selected="true" @click="typeEvent('event')">Evento</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="bar-tab" data-toggle="tab" href="#bar" role="tab" aria-controls="bar" aria-selected="false" @click="typeEvent('bar')">Bar</a>
+              </li>
+            </ul>
+            <div class="tab-content border-0 pt-4" id="myTabContent">
+              <div class="tab-pane fade show active p-0" id="event" role="tabpanel" aria-labelledby="event-tab">
+                <div class="form-group">
+                  <label>Nombre del cliente *</label>
+                  <input type="text" class="form-control" :class="{'is-invalid': errors.client}" v-model="eventCurrent.client">
+                  <div class="invalid-feedback" v-if="errors.client">{{errors.client[0]}}</div>
+                </div>
+                <div class="form-group">
+                  <label>Teléfono del cliente *</label>
+                  <input type="text" class="form-control" :class="{'is-invalid': errors.client_phone}" v-model="eventCurrent.client_phone">
+                  <div class="invalid-feedback" v-if="errors.client_phone">{{errors.client_phone[0]}}</div>
+                </div>
+                <div class="form-group">
+                  <label>Correo del cliente *</label>
+                  <input type="text" class="form-control" :class="{'is-invalid': errors.client_email}" v-model="eventCurrent.client_email">
+                  <div class="invalid-feedback" v-if="errors.client_email">{{errors.client_email[0]}}</div>
+                </div>
+                <div class="form-group">
+                  <label>Fecha *</label>
+                  <input type="date" class="form-control" :class="{'is-invalid': errors.date}" v-model="eventCurrent.date">
+                  <div class="invalid-feedback" v-if="errors.date">{{errors.date[0]}}</div>
+                </div>
+                <div class="form-group">
+                  <label>Horario *</label>
+                  <input type="text" class="form-control" :class="{'is-invalid': errors.schedule}" v-model="eventCurrent.schedule">
+                  <div class="invalid-feedback" v-if="errors.schedule">{{errors.schedule[0]}}</div>
+                </div>
+                <div class="form-group">
+                  <label>Aforo del evento *</label>
+                  <input type="text" class="form-control" :class="{'is-invalid': errors.capacity}" v-model="eventCurrent.capacity">
+                  <div class="invalid-feedback" v-if="errors.capacity">{{errors.capacity[0]}}</div>
+                </div>
+                <div class="form-group">
+                  <label>Lugar *</label>
+                  <input type="text" class="form-control" :class="{'is-invalid': errors.place}" v-model="eventCurrent.place">
+                  <div class="invalid-feedback" v-if="errors.place">{{errors.place[0]}}</div>
+                </div>
+                <div class="form-group">
+                  <label>Artista *</label>
+                  <multiselect
+                    v-model="eventCurrent.artist"
+                    :options="users"
+                    openDirection="bottom"
+                    track-by="id"
+                    label="name"
+                    :class="{'border border-danger rounded': errors.artist}">
+                  </multiselect>
+                  <small class="form-text text-danger" v-if="errors.artist">{{errors.artist[0]}}</small>
+                </div>
+                <div class="form-group">
+                  <label>Instalacion de sonido *</label>
+                  <select class="form-control" :class="{'is-invalid': errors.sound_installation}" v-model="eventCurrent.sound_installation">
+                    <option value="Si">Si</option>
+                    <option value="No">No</option>
+                  </select>
+                  <div class="invalid-feedback" v-if="errors.sound_installation">{{errors.sound_installation[0]}}</div>
+                </div>
+                <div class="form-group">
+                  <label>Vendido *</label>
+                  <input type="text" class="form-control" :class="{'is-invalid': errors.sold}" v-model="eventCurrent.sold">
+                  <div class="invalid-feedback" v-if="errors.sold">{{errors.sold[0]}}</div>
+                </div>
+                <div class="form-group">
+                  <label>Requiere Factura *</label>
+                  <select class="form-control" :class="{'is-invalid': errors.invoice_required}" v-model="eventCurrent.invoice_required">
+                    <option value="Si">Si</option>
+                    <option value="No">No</option>
+                  </select>
+                  <div class="invalid-feedback" v-if="errors.invoice_required">{{errors.invoice_required[0]}}</div>
+                </div>
+                <div class="form-group">
+                  <label>Descripcion *</label>
+                  <textarea class="form-control" rows="5" :class="{'is-invalid': errors.description}" v-model="eventCurrent.description" placeholder="Información del evento"></textarea>
+                  <div class="invalid-feedback" v-if="errors.description">{{errors.description[0]}}</div>
+                </div>
+              </div>
+              <div class="tab-pane fade p-0" id="bar" role="tabpanel" aria-labelledby="bar-tab">
+                <div class="form-group">
+                  <label>Fecha *</label>
+                  <input type="date" class="form-control" :class="{'is-invalid': errors.date}" v-model="eventCurrent.date">
+                  <div class="invalid-feedback" v-if="errors.date">{{errors.date[0]}}</div>
+                </div>
+                <div class="form-group">
+                  <label>Horario *</label>
+                  <input type="text" class="form-control" :class="{'is-invalid': errors.schedule}" v-model="eventCurrent.schedule">
+                  <div class="invalid-feedback" v-if="errors.schedule">{{errors.schedule[0]}}</div>
+                </div>
+                <div class="form-group">
+                  <label>Lugar *</label>
+                  <input type="text" class="form-control" :class="{'is-invalid': errors.place}" v-model="eventCurrent.place">
+                  <div class="invalid-feedback" v-if="errors.place">{{errors.place[0]}}</div>
+                </div>
+                <div class="form-group">
+                  <label>Artista *</label>
+                  <multiselect
+                    v-model="eventCurrent.artist"
+                    :options="users"
+                    openDirection="bottom"
+                    track-by="id"
+                    label="name"
+                    :class="{'border border-danger rounded': errors.artist}">
+                  </multiselect>
+                  <small class="form-text text-danger" v-if="errors.artist">{{errors.artist[0]}}</small>
+                </div>
+                <div class="form-group">
+                  <label>Descripcion *</label>
+                  <textarea class="form-control" rows="5" :class="{'is-invalid': errors.description}" v-model="eventCurrent.description" placeholder="Información del evento"></textarea>
+                  <div class="invalid-feedback" v-if="errors.description">{{errors.description[0]}}</div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="modal-footer">
@@ -138,7 +189,8 @@ export default {
   data: () => ({
     showDate: new Date(),
     eventCurrent: {
-      schedule: Vue.moment().format('YYYY-MM-DDTHH:mm')
+      type: 'event',
+      date: Vue.moment().format('YYYY-MM-DD')
     },
     events: [],
     users: [],
@@ -187,8 +239,11 @@ export default {
     removeUser () {
       this.getEvents()
     },
-    setShowDate(d) {
+    setShowDate (d) {
       this.showDate = d
+    },
+    typeEvent (type) {
+      this.eventCurrent.type = type
     },
     saveEvent () {
       if (this.action == 'Crear') {
@@ -201,8 +256,7 @@ export default {
       this.action = 'Crear'
       this.errors = {}
       this.eventCurrent= {}
-      //this.eventCurrent.schedule = Vue.moment(d).format('YYYY-MM-DD')
-      this.eventCurrent.schedule = Vue.moment(d).format('YYYY-MM-DDTHH:mm')
+      this.eventCurrent.date = Vue.moment(d).format('YYYY-MM-DD')
       $('#eventModal').modal('show')
     },
     storeEvent () {
@@ -229,8 +283,13 @@ export default {
       this.action = 'Editar'
       this.errors = {}
       this.eventCurrent = e.originalEvent
-      this.eventCurrent.schedule = Vue.moment(e.originalEvent.schedule).format('YYYY-MM-DDTHH:mm')
+      this.eventCurrent.date = e.originalEvent.date
       this.eventCurrent.index = this.events.findIndex(x => x.id === e.originalEvent.id)
+      if (this.eventCurrent.type == 'event') {
+        $('#myTab li:first-child a').tab('show')
+      } else {
+        $('#myTab li:last-child a').tab('show')
+      }
       $('#eventModal').modal('show')
     },
     updateEvent () {
@@ -239,7 +298,6 @@ export default {
         axios.put(`/api/events/update/${this.eventCurrent.id}`, this.eventCurrent)
         .then(response => {
           this.events[this.eventCurrent.index] = response.data
-          this.events[this.eventCurrent.index].schedule = Vue.moment(response.data.schedule).format('YYYY-MM-DDTHH:mm')
           this.eventCurrent = {}
           $('#eventModal').modal('hide')
           this.$toasted.global.error('Evento actualizado!')
