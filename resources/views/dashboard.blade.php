@@ -57,10 +57,10 @@
                     <div class="card">
                         <div class="card-body p-0 d-flex align-items-center">
                             <a href="/users" class="text-decoration-none">
-                            <i class="fa fa-users bg-success p-4 font-2xl mr-3 text-decoration-none"></i>
+                            <i class="fa fa-user bg-success p-4 font-2xl mr-3"></i>
                             </a>
                             <div>
-                                <a href="/users" class="text-value-sm text-success text-decoration-none">Usuarios</a>
+                                <a href="/users" class="text-value-sm text-success">Usuarios</a>
                             </div>
                         </div>
                     </div>

@@ -71450,7 +71450,9 @@ var render = function() {
                 })
               ]),
               _vm._v(" "),
-              _c("th", [_vm._v("\n            Teléfonos\n          ")]),
+              _c("th", { staticClass: "d-none d-sm-table-cell" }, [
+                _vm._v("\n            Teléfonos\n          ")
+              ]),
               _vm._v(" "),
               _c("th", { staticClass: "d-none d-sm-table-cell" })
             ])
@@ -73158,7 +73160,9 @@ var render = function() {
                 })
               ]),
               _vm._v(" "),
-              _c("th", [_vm._v("\n            Teléfono\n          ")]),
+              _c("th", { staticClass: "d-none d-sm-table-cell" }, [
+                _vm._v("\n            Teléfono\n          ")
+              ]),
               _vm._v(" "),
               _c("th", { staticClass: "d-none d-sm-table-cell" })
             ])

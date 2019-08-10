@@ -45,7 +45,7 @@
               <a href="#" class="text-dark" @click.prevent="sort('client')">Contacto</a>
               <i class="mr-1 fas" :class="{'fa-long-arrow-alt-down': filters.orderBy.column == 'client' && filters.orderBy.direction == 'asc', 'fa-long-arrow-alt-up': filters.orderBy.column == 'client' && filters.orderBy.direction == 'desc'}"></i>
             </th>
-            <th>
+            <th class="d-none d-sm-table-cell">
               Teléfono
             </th>
             <th class="d-none d-sm-table-cell"></th>
