@@ -1,5 +1,5 @@
 @extends('layouts.app')
 
 @section('content')
-    <events-index></events-index>
+    <events-index :user="{{ Auth::user()}}"></events-index>
 @endsection

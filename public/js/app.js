@@ -69919,6 +69919,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -69937,6 +69951,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       action: 'Crear'
     };
   },
+  props: ['user'],
   mounted: function mounted() {
     //this.getEvents()
     this.getUsers();
@@ -69953,30 +69968,32 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         _this.errors = error.response.data.errors;
       });
     },
-    getEvents: function getEvents() {
+
+    // getEvents () {
+    //   axios.get(`/api/events/all`)
+    //   .then(response => {
+    //     this.events = response.data
+    //   })
+    //   .catch(error => {
+    //     this.errors = error.response.data.errors
+    //   })
+    // },
+    getEventsByUser: function getEventsByUser(user) {
       var _this2 = this;
 
-      axios.get('/api/events/all').then(function (response) {
+      axios.get('/api/events/byUser/' + user.id).then(function (response) {
         _this2.events = response.data;
       }).catch(function (error) {
         _this2.errors = error.response.data.errors;
       });
     },
-    getEventsByUser: function getEventsByUser(user) {
-      var _this3 = this;
-
-      axios.get('/api/events/byUser/' + user.id).then(function (response) {
-        _this3.events = response.data;
-      }).catch(function (error) {
-        _this3.errors = error.response.data.errors;
-      });
-    },
     changeUser: function changeUser(user) {
       this.getEventsByUser(user);
     },
-    removeUser: function removeUser() {
-      this.getEvents();
-    },
+
+    // removeUser () {
+    //   this.getEvents()
+    // },
     setShowDate: function setShowDate(d) {
       this.showDate = d;
     },
@@ -69994,25 +70011,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.action = 'Crear';
       this.errors = {};
       this.eventCurrent = {};
+      this.eventCurrent.type = 'event';
       this.eventCurrent.date = Vue.moment(d).format('YYYY-MM-DD');
+      $('#myTab li:first-child a').tab('show');
       $('#eventModal').modal('show');
     },
     storeEvent: function storeEvent() {
-      var _this4 = this;
+      var _this3 = this;
 
       if (!this.submiting) {
         this.submiting = true;
         axios.post('/api/events/store', this.eventCurrent).then(function (response) {
-          _this4.events.push(response.data);
-          _this4.eventCurrent = {};
+          _this3.events.push(response.data);
+          _this3.eventCurrent = {};
           $('#eventModal').modal('hide');
-          _this4.$toasted.global.error('Evento creado!');
+          _this3.$toasted.global.error('Evento creado!');
         }).catch(function (error) {
           if (error.response) {
-            _this4.errors = error.response.data.errors;
+            _this3.errors = error.response.data.errors;
           }
         }).then(function (response) {
-          _this4.submiting = false;
+          _this3.submiting = false;
         });
       }
     },
@@ -70032,26 +70051,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       $('#eventModal').modal('show');
     },
     updateEvent: function updateEvent() {
-      var _this5 = this;
+      var _this4 = this;
 
       if (!this.submiting) {
         this.submiting = true;
         axios.put('/api/events/update/' + this.eventCurrent.id, this.eventCurrent).then(function (response) {
-          _this5.events[_this5.eventCurrent.index] = response.data;
-          _this5.eventCurrent = {};
+          _this4.events[_this4.eventCurrent.index] = response.data;
+          _this4.eventCurrent = {};
           $('#eventModal').modal('hide');
-          _this5.$toasted.global.error('Evento actualizado!');
+          _this4.$toasted.global.error('Evento actualizado!');
         }).catch(function (error) {
           if (error.response) {
-            _this5.errors = error.response.data.errors;
+            _this4.errors = error.response.data.errors;
           }
         }).then(function (response) {
-          _this5.submiting = false;
+          _this4.submiting = false;
         });
       }
     },
     deleteEvent: function deleteEvent() {
-      var _this6 = this;
+      var _this5 = this;
 
       if (!this.submitingDelete) {
         this.submitingDelete = true;
@@ -70063,15 +70082,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
           dangerMode: true
         }).then(function (willDelete) {
           if (willDelete) {
-            axios.delete('/api/events/' + _this6.eventCurrent.id).then(function (response) {
-              _this6.events.splice(_this6.eventCurrent.index, 1);
-              _this6.$toasted.global.error('Evento borrado!');
+            axios.delete('/api/events/' + _this5.eventCurrent.id).then(function (response) {
+              _this5.events.splice(_this5.eventCurrent.index, 1);
+              _this5.$toasted.global.error('Evento borrado!');
               $('#eventModal').modal('hide');
             }).catch(function (error) {
-              _this6.errors = error.response.data.errors;
+              _this5.errors = error.response.data.errors;
             });
           }
-          _this6.submitingDelete = false;
+          _this5.submitingDelete = false;
         });
       }
     }
@@ -70093,29 +70112,33 @@ var render = function() {
       [
         _c("h4", { staticClass: "float-left pt-2" }, [_vm._v("Eventos")]),
         _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "card-header-actions mr-1" },
-          [
-            _c("multiselect", {
-              attrs: {
-                options: _vm.users,
-                openDirection: "bottom",
-                "track-by": "id",
-                label: "name"
-              },
-              on: { select: _vm.changeUser, remove: _vm.removeUser },
-              model: {
-                value: _vm.userCurrent,
-                callback: function($$v) {
-                  _vm.userCurrent = $$v
-                },
-                expression: "userCurrent"
-              }
-            })
-          ],
-          1
-        )
+        _vm.user.hasRole["master"] ||
+        _vm.user.hasRole["superadmin"] ||
+        _vm.user.hasRole["admin"]
+          ? _c(
+              "div",
+              { staticClass: "card-header-actions mr-1" },
+              [
+                _c("multiselect", {
+                  attrs: {
+                    options: _vm.users,
+                    openDirection: "bottom",
+                    "track-by": "id",
+                    label: "name"
+                  },
+                  on: { select: _vm.changeUser },
+                  model: {
+                    value: _vm.userCurrent,
+                    callback: function($$v) {
+                      _vm.userCurrent = $$v
+                    },
+                    expression: "userCurrent"
+                  }
+                })
+              ],
+              1
+            )
+          : _vm._e()
       ]
     ),
     _vm._v(" "),
@@ -70251,6 +70274,43 @@ var render = function() {
                         }
                       },
                       [
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("label", [_vm._v("Nombre del evento *")]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.eventCurrent.title,
+                                expression: "eventCurrent.title"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            class: { "is-invalid": _vm.errors.title },
+                            attrs: { type: "text" },
+                            domProps: { value: _vm.eventCurrent.title },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.eventCurrent,
+                                  "title",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _vm.errors.title
+                            ? _c("div", { staticClass: "invalid-feedback" }, [
+                                _vm._v(_vm._s(_vm.errors.title[0]))
+                              ])
+                            : _vm._e()
+                        ]),
+                        _vm._v(" "),
                         _c("div", { staticClass: "form-group" }, [
                           _c("label", [_vm._v("Nombre del cliente *")]),
                           _vm._v(" "),
@@ -70752,6 +70812,43 @@ var render = function() {
                       },
                       [
                         _c("div", { staticClass: "form-group" }, [
+                          _c("label", [_vm._v("Nombre del evento *")]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.eventCurrent.title,
+                                expression: "eventCurrent.title"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            class: { "is-invalid": _vm.errors.title },
+                            attrs: { type: "text" },
+                            domProps: { value: _vm.eventCurrent.title },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.eventCurrent,
+                                  "title",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _vm.errors.title
+                            ? _c("div", { staticClass: "invalid-feedback" }, [
+                                _vm._v(_vm._s(_vm.errors.title[0]))
+                              ])
+                            : _vm._e()
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group" }, [
                           _c("label", [_vm._v("Fecha *")]),
                           _vm._v(" "),
                           _c("input", {
@@ -70941,7 +71038,39 @@ var render = function() {
                       ]
                     )
                   ]
-                )
+                ),
+                _vm._v(" "),
+                _vm.action == "Editar"
+                  ? _c("div", [
+                      _c("span", { staticClass: "text-muted" }, [
+                        _vm._v("Creado por:")
+                      ]),
+                      _vm._v(
+                        " " + _vm._s(_vm.eventCurrent.creator.name) + ", "
+                      ),
+                      _c("small", [
+                        _vm._v(
+                          _vm._s(
+                            _vm._f("moment")(_vm.eventCurrent.created_at, "LLL")
+                          )
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("br"),
+                      _vm._v(" "),
+                      _c("span", { staticClass: "text-muted" }, [
+                        _vm._v("Actualizado por:")
+                      ]),
+                      _vm._v(" " + _vm._s(_vm.eventCurrent.editor.name) + ", "),
+                      _c("small", [
+                        _vm._v(
+                          _vm._s(
+                            _vm._f("moment")(_vm.eventCurrent.updated_at, "LLL")
+                          )
+                        )
+                      ])
+                    ])
+                  : _vm._e()
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "modal-footer" }, [

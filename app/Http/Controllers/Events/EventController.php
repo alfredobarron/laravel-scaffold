@@ -15,13 +15,14 @@ class EventController extends Controller
 
     public function byUser($userId)
     {
-        return Event::with('artist')->where('artist_id', $userId)->get();
+        return Event::with('artist', 'creator', 'editor')->where('artist_id', $userId)->get();
     }
 
     public function store (Request $request)
     {
         if ($request->type == 'bar') {
             $this->validate($request, [
+                'title' => 'required|string',
                 'description' => 'required|string',
                 'date' => 'required|date',
                 'schedule' => 'required|string',
@@ -31,7 +32,7 @@ class EventController extends Controller
 
             $event = Event::create([
                 'type' => $request->type,
-                'title' => $request->place,
+                'title' => $request->title,
                 'description' => $request->description,
                 'date' => $request->date,
                 'schedule' => $request->schedule,
@@ -40,6 +41,7 @@ class EventController extends Controller
             ]);
         } else {
             $this->validate($request, [
+                'title' => 'required|string',
                 'description' => 'required|string',
                 'date' => 'required|date',
                 'schedule' => 'required|string',
@@ -56,7 +58,7 @@ class EventController extends Controller
 
             $event = Event::create([
                 'type' => $request->type,
-                'title' => $request->client,
+                'title' => $request->title,
                 'description' => $request->description,
                 'date' => $request->date,
                 'schedule' => $request->schedule,
@@ -79,6 +81,7 @@ class EventController extends Controller
     {
         if ($request->type == 'bar') {
             $this->validate($request, [
+                'title' => 'required|string',
                 'description' => 'required|string',
                 'date' => 'required|date',
                 'schedule' => 'required|string',
@@ -88,7 +91,7 @@ class EventController extends Controller
 
             $event = Event::find($request->id);
             $event->type = $request->type;
-            $event->title = $request->place;
+            $event->title = $request->title;
             $event->description = $request->description;
             $event->date = $request->date;
             $event->schedule = $request->schedule;
@@ -97,6 +100,7 @@ class EventController extends Controller
             $event->save();
         } else {
             $this->validate($request, [
+                'title' => 'required|string',
                 'description' => 'required|string',
                 'date' => 'required|date',
                 'schedule' => 'required|string',
@@ -113,7 +117,7 @@ class EventController extends Controller
 
             $event = Event::find($request->id);
             $event->type = $request->type;
-            $event->title = $request->client;
+            $event->title = $request->title;
             $event->description = $request->description;
             $event->date = $request->date;
             $event->schedule = $request->schedule;

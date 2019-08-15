@@ -2,7 +2,7 @@
   <div class="container">
     <div class="card-header px-0 mt-2 bg-transparent clearfix">
       <h4 class="float-left pt-2">Eventos</h4>
-      <div class="card-header-actions mr-1">
+      <div class="card-header-actions mr-1" v-if="user.hasRole['master'] || user.hasRole['superadmin'] || user.hasRole['admin']">
         <!-- <a class="btn btn-success" href="#">Crear</a> -->
         <multiselect
           v-model="userCurrent"
@@ -10,8 +10,7 @@
           openDirection="bottom"
           track-by="id"
           label="name"
-          @select="changeUser"
-          @remove="removeUser">
+          @select="changeUser">
         </multiselect>
       </div>
     </div>
@@ -56,6 +55,11 @@
             </ul>
             <div class="tab-content border-0 pt-4" id="myTabContent">
               <div class="tab-pane fade show active p-0" id="event" role="tabpanel" aria-labelledby="event-tab">
+                <div class="form-group">
+                  <label>Nombre del evento *</label>
+                  <input type="text" class="form-control" :class="{'is-invalid': errors.title}" v-model="eventCurrent.title">
+                  <div class="invalid-feedback" v-if="errors.title">{{errors.title[0]}}</div>
+                </div>
                 <div class="form-group">
                   <label>Nombre del cliente *</label>
                   <input type="text" class="form-control" :class="{'is-invalid': errors.client}" v-model="eventCurrent.client">
@@ -132,6 +136,11 @@
               </div>
               <div class="tab-pane fade p-0" id="bar" role="tabpanel" aria-labelledby="bar-tab">
                 <div class="form-group">
+                  <label>Nombre del evento *</label>
+                  <input type="text" class="form-control" :class="{'is-invalid': errors.title}" v-model="eventCurrent.title">
+                  <div class="invalid-feedback" v-if="errors.title">{{errors.title[0]}}</div>
+                </div>
+                <div class="form-group">
                   <label>Fecha *</label>
                   <input type="date" class="form-control" :class="{'is-invalid': errors.date}" v-model="eventCurrent.date">
                   <div class="invalid-feedback" v-if="errors.date">{{errors.date[0]}}</div>
@@ -164,6 +173,11 @@
                   <div class="invalid-feedback" v-if="errors.description">{{errors.description[0]}}</div>
                 </div>
               </div>
+            </div>
+            <div v-if="action == 'Editar'">
+              <span class="text-muted">Creado por:</span> {{eventCurrent.creator.name}}, <small>{{eventCurrent.created_at | moment("LLL")}}</small>
+              <br>
+              <span class="text-muted">Actualizado por:</span> {{eventCurrent.editor.name}}, <small>{{eventCurrent.updated_at | moment("LLL")}}</small> 
             </div>
           </div>
           <div class="modal-footer">
@@ -200,6 +214,7 @@ export default {
     submitingDelete: false,
     action: 'Crear'
   }),
+  props: ['user'],
   mounted () {
     //this.getEvents()
     this.getUsers()
@@ -215,15 +230,15 @@ export default {
         this.errors = error.response.data.errors
       })
     },
-    getEvents () {
-      axios.get(`/api/events/all`)
-      .then(response => {
-        this.events = response.data
-      })
-      .catch(error => {
-        this.errors = error.response.data.errors
-      })
-    },
+    // getEvents () {
+    //   axios.get(`/api/events/all`)
+    //   .then(response => {
+    //     this.events = response.data
+    //   })
+    //   .catch(error => {
+    //     this.errors = error.response.data.errors
+    //   })
+    // },
     getEventsByUser (user) {
       axios.get(`/api/events/byUser/${user.id}`)
       .then(response => {
@@ -236,9 +251,9 @@ export default {
     changeUser (user) {
       this.getEventsByUser(user)
     },
-    removeUser () {
-      this.getEvents()
-    },
+    // removeUser () {
+    //   this.getEvents()
+    // },
     setShowDate (d) {
       this.showDate = d
     },
@@ -256,7 +271,9 @@ export default {
       this.action = 'Crear'
       this.errors = {}
       this.eventCurrent= {}
+      this.eventCurrent.type = 'event'
       this.eventCurrent.date = Vue.moment(d).format('YYYY-MM-DD')
+      $('#myTab li:first-child a').tab('show')
       $('#eventModal').modal('show')
     },
     storeEvent () {
