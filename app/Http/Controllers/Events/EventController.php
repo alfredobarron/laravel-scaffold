@@ -10,7 +10,7 @@ class EventController extends Controller
 {
     public function all()
     {
-        return Event::with('artist')->get();
+        return Event::with('artist', 'creator', 'editor')->get();
     }
 
     public function byUser($userId)
@@ -74,7 +74,7 @@ class EventController extends Controller
             ]);
         }
 
-        return Event::with('artist')->find($event->id);
+        return Event::with('artist', 'creator', 'editor')->find($event->id);
     }
 
     public function update (Request $request)
@@ -133,7 +133,7 @@ class EventController extends Controller
             $event->save();
         }
 
-        return Event::with('artist')->find($event->id);
+        return Event::with('artist', 'creator', 'editor')->find($event->id);
     }
 
     public function destroy ($user)

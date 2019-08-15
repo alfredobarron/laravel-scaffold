@@ -180,7 +180,7 @@
               <span class="text-muted">Actualizado por:</span> {{eventCurrent.editor.name}}, <small>{{eventCurrent.updated_at | moment("LLL")}}</small>
             </div>
           </div>
-          <div class="modal-footer">
+          <div class="modal-footer" v-if="!user.hasRole['viewer']">
             <a class="card-header-action mr-2" href="#" :disabled="submitingDelete" v-if="action == 'Editar'" @click.prevent="deleteEvent">
               <i class="fas fa-spinner fa-spin" v-if="submitingDelete"></i>
               <i class="far fa-trash-alt" v-else></i>
@@ -268,13 +268,15 @@ export default {
       }
     },
     addEvent (d) {
-      this.action = 'Crear'
-      this.errors = {}
-      this.eventCurrent= {}
-      this.eventCurrent.type = 'event'
-      this.eventCurrent.date = Vue.moment(d).format('YYYY-MM-DD')
-      $('#myTab li:first-child a').tab('show')
-      $('#eventModal').modal('show')
+      if (!this.user.hasRole['viewer']) {
+        this.action = 'Crear'
+        this.errors = {}
+        this.eventCurrent= {}
+        this.eventCurrent.type = 'event'
+        this.eventCurrent.date = Vue.moment(d).format('YYYY-MM-DD')
+        $('#myTab li:first-child a').tab('show')
+        $('#eventModal').modal('show')
+      }
     },
     storeEvent () {
       if (!this.submiting) {

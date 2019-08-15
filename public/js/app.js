@@ -70008,13 +70008,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       }
     },
     addEvent: function addEvent(d) {
-      this.action = 'Crear';
-      this.errors = {};
-      this.eventCurrent = {};
-      this.eventCurrent.type = 'event';
-      this.eventCurrent.date = Vue.moment(d).format('YYYY-MM-DD');
-      $('#myTab li:first-child a').tab('show');
-      $('#eventModal').modal('show');
+      if (!this.user.hasRole['viewer']) {
+        this.action = 'Crear';
+        this.errors = {};
+        this.eventCurrent = {};
+        this.eventCurrent.type = 'event';
+        this.eventCurrent.date = Vue.moment(d).format('YYYY-MM-DD');
+        $('#myTab li:first-child a').tab('show');
+        $('#eventModal').modal('show');
+      }
     },
     storeEvent: function storeEvent() {
       var _this3 = this;
@@ -71071,51 +71073,57 @@ var render = function() {
                   : _vm._e()
               ]),
               _vm._v(" "),
-              _c("div", { staticClass: "modal-footer" }, [
-                _vm.action == "Editar"
-                  ? _c(
+              !_vm.user.hasRole["viewer"]
+                ? _c("div", { staticClass: "modal-footer" }, [
+                    _vm.action == "Editar"
+                      ? _c(
+                          "a",
+                          {
+                            staticClass: "card-header-action mr-2",
+                            attrs: { href: "#", disabled: _vm.submitingDelete },
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault()
+                                return _vm.deleteEvent($event)
+                              }
+                            }
+                          },
+                          [
+                            _vm.submitingDelete
+                              ? _c("i", {
+                                  staticClass: "fas fa-spinner fa-spin"
+                                })
+                              : _c("i", { staticClass: "far fa-trash-alt" }),
+                            _vm._v(" "),
+                            _c("span", { staticClass: "ml-1" }, [
+                              _vm._v("Borrar")
+                            ])
+                          ]
+                        )
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _c(
                       "a",
                       {
-                        staticClass: "card-header-action mr-2",
-                        attrs: { href: "#", disabled: _vm.submitingDelete },
+                        staticClass: "btn btn-primary",
+                        attrs: { href: "#", disabled: _vm.submiting },
                         on: {
                           click: function($event) {
                             $event.preventDefault()
-                            return _vm.deleteEvent($event)
+                            return _vm.saveEvent($event)
                           }
                         }
                       },
                       [
-                        _vm.submitingDelete
+                        _vm.submiting
                           ? _c("i", { staticClass: "fas fa-spinner fa-spin" })
-                          : _c("i", { staticClass: "far fa-trash-alt" }),
+                          : _c("i", { staticClass: "fas fa-check" }),
                         _vm._v(" "),
-                        _c("span", { staticClass: "ml-1" }, [_vm._v("Borrar")])
+                        _c("span", { staticClass: "ml-1" }, [_vm._v("Guardar")])
                       ]
                     )
-                  : _vm._e(),
-                _vm._v(" "),
-                _c(
-                  "a",
-                  {
-                    staticClass: "btn btn-primary",
-                    attrs: { href: "#", disabled: _vm.submiting },
-                    on: {
-                      click: function($event) {
-                        $event.preventDefault()
-                        return _vm.saveEvent($event)
-                      }
-                    }
-                  },
-                  [
-                    _vm.submiting
-                      ? _c("i", { staticClass: "fas fa-spinner fa-spin" })
-                      : _c("i", { staticClass: "fas fa-check" }),
-                    _vm._v(" "),
-                    _c("span", { staticClass: "ml-1" }, [_vm._v("Guardar")])
-                  ]
-                )
-              ])
+                  ])
+                : _vm._e()
             ])
           ]
         )
