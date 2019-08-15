@@ -2,7 +2,7 @@
   <div class="container">
     <div class="card-header px-0 mt-2 bg-transparent clearfix">
       <h4 class="float-left pt-2">Eventos</h4>
-      <div class="card-header-actions mr-1" v-if="user.hasRole['master'] || user.hasRole['superadmin'] || user.hasRole['admin']">
+      <div class="card-header-actions mr-1" v-if="!user.hasRole['comediante']">
         <!-- <a class="btn btn-success" href="#">Crear</a> -->
         <multiselect
           v-model="userCurrent"
@@ -177,7 +177,7 @@
             <div v-if="action == 'Editar'">
               <span class="text-muted">Creado por:</span> {{eventCurrent.creator.name}}, <small>{{eventCurrent.created_at | moment("LLL")}}</small>
               <br>
-              <span class="text-muted">Actualizado por:</span> {{eventCurrent.editor.name}}, <small>{{eventCurrent.updated_at | moment("LLL")}}</small> 
+              <span class="text-muted">Actualizado por:</span> {{eventCurrent.editor.name}}, <small>{{eventCurrent.updated_at | moment("LLL")}}</small>
             </div>
           </div>
           <div class="modal-footer">

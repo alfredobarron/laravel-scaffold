@@ -70112,9 +70112,7 @@ var render = function() {
       [
         _c("h4", { staticClass: "float-left pt-2" }, [_vm._v("Eventos")]),
         _vm._v(" "),
-        _vm.user.hasRole["master"] ||
-        _vm.user.hasRole["superadmin"] ||
-        _vm.user.hasRole["admin"]
+        !_vm.user.hasRole["comediante"]
           ? _c(
               "div",
               { staticClass: "card-header-actions mr-1" },

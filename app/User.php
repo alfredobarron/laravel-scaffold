@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-use Wildside\Userstamps\Userstamps;
 
 use Storage;
 
@@ -18,7 +17,6 @@ class User extends Authenticatable
     use Notifiable;
     use SoftDeletes;
     use HasRoles;
-    use Userstamps;
 
     /**
      * The attributes that are mass assignable.
