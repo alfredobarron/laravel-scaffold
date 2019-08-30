@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Events;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Events\Event;
+use Carbon\Carbon;
 
 class EventController extends Controller
 {
@@ -13,9 +14,14 @@ class EventController extends Controller
         return Event::with('artist', 'creator', 'editor')->get();
     }
 
-    public function byUser($userId)
+    public function byUser(Request $request)
     {
-        return Event::with('artist', 'creator', 'editor')->where('artist_id', $userId)->get();
+        $dt = Carbon::parse($request->date);
+        return Event::with('artist', 'creator', 'editor')
+            ->where('artist_id', $request->userId)
+            ->whereMonth('date', $dt->month)
+            ->whereYear('date', $dt->year)
+            ->get();
     }
 
     public function store (Request $request)

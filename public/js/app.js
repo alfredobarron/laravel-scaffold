@@ -69933,6 +69933,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -69945,6 +69950,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       events: [],
       users: [],
       userCurrent: Laravel.user,
+      isLoading: false,
       errors: {},
       submiting: false,
       submitingDelete: false,
@@ -69955,7 +69961,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   mounted: function mounted() {
     //this.getEvents()
     this.getUsers();
-    this.getEventsByUser(this.userCurrent);
+    this.getEventsByUser();
   },
 
   methods: {
@@ -69978,17 +69984,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     //     this.errors = error.response.data.errors
     //   })
     // },
-    getEventsByUser: function getEventsByUser(user) {
+    getEventsByUser: function getEventsByUser() {
       var _this2 = this;
 
-      axios.get('/api/events/byUser/' + user.id).then(function (response) {
+      this.isLoading = true;
+      axios.post('/api/events/byUser', { userId: this.userCurrent.id, date: this.showDate }).then(function (response) {
         _this2.events = response.data;
+        _this2.isLoading = false;
       }).catch(function (error) {
         _this2.errors = error.response.data.errors;
+        _this2.isLoading = false;
       });
     },
     changeUser: function changeUser(user) {
-      this.getEventsByUser(user);
+      this.userCurrent = user;
+      this.getEventsByUser();
     },
 
     // removeUser () {
@@ -69996,6 +70006,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     // },
     setShowDate: function setShowDate(d) {
       this.showDate = d;
+      this.getEventsByUser();
     },
     typeEvent: function typeEvent(type) {
       this.eventCurrent.type = type;
@@ -70124,7 +70135,9 @@ var render = function() {
                     options: _vm.users,
                     openDirection: "bottom",
                     "track-by": "id",
-                    label: "name"
+                    label: "name",
+                    allowEmpty: false,
+                    loading: _vm.isLoading
                   },
                   on: { select: _vm.changeUser },
                   model: {
@@ -71042,33 +71055,47 @@ var render = function() {
                 _vm._v(" "),
                 _vm.action == "Editar"
                   ? _c("div", [
-                      _c("span", { staticClass: "text-muted" }, [
-                        _vm._v("Creado por:")
-                      ]),
-                      _vm._v(
-                        " " + _vm._s(_vm.eventCurrent.creator.name) + ", "
-                      ),
-                      _c("small", [
-                        _vm._v(
-                          _vm._s(
-                            _vm._f("moment")(_vm.eventCurrent.created_at, "LLL")
-                          )
-                        )
-                      ]),
+                      _vm.eventCurrent.creator
+                        ? _c("div", [
+                            _c("span", { staticClass: "text-muted" }, [
+                              _vm._v("Creado por:")
+                            ]),
+                            _vm._v(
+                              " " + _vm._s(_vm.eventCurrent.creator.name) + ", "
+                            ),
+                            _c("small", [
+                              _vm._v(
+                                _vm._s(
+                                  _vm._f("moment")(
+                                    _vm.eventCurrent.created_at,
+                                    "LLL"
+                                  )
+                                )
+                              )
+                            ])
+                          ])
+                        : _vm._e(),
                       _vm._v(" "),
-                      _c("br"),
-                      _vm._v(" "),
-                      _c("span", { staticClass: "text-muted" }, [
-                        _vm._v("Actualizado por:")
-                      ]),
-                      _vm._v(" " + _vm._s(_vm.eventCurrent.editor.name) + ", "),
-                      _c("small", [
-                        _vm._v(
-                          _vm._s(
-                            _vm._f("moment")(_vm.eventCurrent.updated_at, "LLL")
-                          )
-                        )
-                      ])
+                      _vm.eventCurrent.editor
+                        ? _c("div", [
+                            _c("span", { staticClass: "text-muted" }, [
+                              _vm._v("Actualizado por:")
+                            ]),
+                            _vm._v(
+                              " " + _vm._s(_vm.eventCurrent.editor.name) + ", "
+                            ),
+                            _c("small", [
+                              _vm._v(
+                                _vm._s(
+                                  _vm._f("moment")(
+                                    _vm.eventCurrent.updated_at,
+                                    "LLL"
+                                  )
+                                )
+                              )
+                            ])
+                          ])
+                        : _vm._e()
                     ])
                   : _vm._e()
               ]),

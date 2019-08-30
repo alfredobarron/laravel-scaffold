@@ -10,6 +10,8 @@
           openDirection="bottom"
           track-by="id"
           label="name"
+          :allowEmpty="false"
+          :loading="isLoading"
           @select="changeUser">
         </multiselect>
       </div>
@@ -175,9 +177,12 @@
               </div>
             </div>
             <div v-if="action == 'Editar'">
-              <span class="text-muted">Creado por:</span> {{eventCurrent.creator.name}}, <small>{{eventCurrent.created_at | moment("LLL")}}</small>
-              <br>
-              <span class="text-muted">Actualizado por:</span> {{eventCurrent.editor.name}}, <small>{{eventCurrent.updated_at | moment("LLL")}}</small>
+              <div v-if="eventCurrent.creator">
+                <span class="text-muted">Creado por:</span> {{eventCurrent.creator.name}}, <small>{{eventCurrent.created_at | moment("LLL")}}</small>
+              </div>
+              <div v-if="eventCurrent.editor">
+                <span class="text-muted">Actualizado por:</span> {{eventCurrent.editor.name}}, <small>{{eventCurrent.updated_at | moment("LLL")}}</small>
+              </div>
             </div>
           </div>
           <div class="modal-footer" v-if="!user.hasRole['viewer']">
@@ -209,6 +214,7 @@ export default {
     events: [],
     users: [],
     userCurrent: Laravel.user,
+    isLoading: false,
     errors: {},
     submiting: false,
     submitingDelete: false,
@@ -218,7 +224,7 @@ export default {
   mounted () {
     //this.getEvents()
     this.getUsers()
-    this.getEventsByUser(this.userCurrent)
+    this.getEventsByUser()
   },
   methods: {
     getUsers () {
@@ -239,23 +245,28 @@ export default {
     //     this.errors = error.response.data.errors
     //   })
     // },
-    getEventsByUser (user) {
-      axios.get(`/api/events/byUser/${user.id}`)
+    getEventsByUser () {
+      this.isLoading = true
+      axios.post(`/api/events/byUser`, {userId: this.userCurrent.id, date: this.showDate})
       .then(response => {
         this.events = response.data
+        this.isLoading = false
       })
       .catch(error => {
         this.errors = error.response.data.errors
+        this.isLoading = false
       })
     },
     changeUser (user) {
-      this.getEventsByUser(user)
+      this.userCurrent = user
+      this.getEventsByUser()
     },
     // removeUser () {
     //   this.getEvents()
     // },
     setShowDate (d) {
       this.showDate = d
+      this.getEventsByUser()
     },
     typeEvent (type) {
       this.eventCurrent.type = type
