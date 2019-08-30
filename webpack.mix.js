@@ -13,14 +13,14 @@ const mix = require('laravel-mix');
 
 mix.js('resources/js/app.js', 'public/js')
    .sass('resources/sass/app.scss', 'public/css')
-   .browserSync('as-hide.test');
+   .browserSync('as.test');
 
 
 var SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 mix.webpackConfig({
    plugins: [
    new SWPrecacheWebpackPlugin({
-       cacheId: 'ls_pwa_as',
+       cacheId: 'as_pwa',
        filename: 'service-worker.js',
        staticFileGlobs: ['public/**/*.{css,eot,svg,ttf,woff,woff2,js,html}'],
        minify: true,
