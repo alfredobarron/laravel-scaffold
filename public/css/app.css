@@ -11581,3 +11581,14 @@ a.text-dark:focus {
   bottom: 3% !important;
 }
 
+.multiselect,
+.multiselect__content-wrapper {
+  z-index: 1001;
+}
+
+.drag-calendar .arrow:hover {
+  background-color: none !important;
+  -webkit-box-shadow: none !important;
+          box-shadow: none !important;
+}
+

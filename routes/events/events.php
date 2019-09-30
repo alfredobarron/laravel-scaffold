@@ -12,6 +12,7 @@ Route::middleware('auth')->group(function () {
         Route::group(['prefix' => 'api/events'], function() {
             //Route::post('/filter', 'EventController@filter')->middleware('permission:read-events');
             Route::get('/all', 'EventController@all')->middleware('permission:read-events');
+            Route::post('/byDay', 'EventController@byDay')->middleware('permission:read-events');
             Route::post('/byUser', 'EventController@byUser')->middleware('permission:read-events');
 
             //Route::get('/{user}', 'EventController@show')->middleware('permission:read-events');

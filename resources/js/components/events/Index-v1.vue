@@ -2,7 +2,7 @@
   <div class="container">
     <div class="card-header px-0 mt-2 bg-transparent clearfix">
       <h4 class="float-left pt-2">Eventos</h4>
-      <div class="card-header-actions ml-1 mr-1" v-if="!user.hasRole['comediante']">
+      <div class="card-header-actions mr-1" v-if="!user.hasRole['comediante']">
         <!-- <a class="btn btn-success" href="#">Crear</a> -->
         <multiselect
           v-model="userCurrent"
@@ -15,12 +15,11 @@
           @select="changeUser">
         </multiselect>
       </div>
-      <a href="#" class="btn btn-primary float-right" @click.prevent="addEvent"><i class="fas fa-plus"></i><span class="d-md-down-none ml-1">Crear Evento</span></a>
     </div>
     <div class="card-body px-0">
       <div class="row">
-        <div class="col">
-          <!-- <calendar-view
+        <div class="col" style="height: 500px;">
+          <calendar-view
             class="theme-default"
             :show-date="showDate"
             locale="es"
@@ -33,27 +32,7 @@
               slot-scope="t"
               :header-props="t.headerProps"
               @input="setShowDate"/>
-          </calendar-view> -->
-          <DraggableCal :pastIsDisabled="false" :prependedMonths="12" accentColor="#6cb2eb" @dateSelected="loadEvents($event)"></DraggableCal>
-          <hr class="mt-0">
-        </div>
-        <div class="col">
-          <ul class="list-group mt-3">
-            <li class="list-group-item mb-1" v-for="item in events" @click="editEvent(item)">
-              <div class="row">
-                <div class="col-12">
-                  <p class="pre-line mb-1">{{item.title}}</p>
-                  <div class="text-muted">{{item.description}}</div>
-                  <div class="text-muted"><small><i class="icon-location-pin mr-1"></i>{{item.place}}</small></div>
-                  <div>
-                    <small class="text-muted">
-                      <i class="far fa-clock mr-1"></i>{{item.date | moment('LL')}} | {{item.schedule}}
-                    </small>
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ul>
+          </calendar-view>
         </div>
       </div>
     </div>
@@ -243,10 +222,9 @@ export default {
   }),
   props: ['user'],
   mounted () {
-    this.getUsers()
-    this.loadEvents()
     //this.getEvents()
-    ////this.getEventsByUser()
+    this.getUsers()
+    this.getEventsByUser()
   },
   methods: {
     getUsers () {
@@ -256,18 +234,6 @@ export default {
       })
       .catch(error => {
         this.errors = error.response.data.errors
-      })
-    },
-    loadEvents (event) {
-      this.isLoading = true
-      axios.post(`/api/events/byDay`, {userId: this.userCurrent.id, date: event})
-      .then(response => {
-        this.events = response.data
-        this.isLoading = false
-      })
-      .catch(error => {
-        this.errors = error.response.data.errors
-        this.isLoading = false
       })
     },
     // getEvents () {
@@ -293,16 +259,15 @@ export default {
     },
     changeUser (user) {
       this.userCurrent = user
-      //this.getEventsByUser()
-      this.loadEvents()
+      this.getEventsByUser()
     },
     // removeUser () {
     //   this.getEvents()
     // },
-    // setShowDate (d) {
-    //   this.showDate = d
-    //   this.getEventsByUser()
-    // },
+    setShowDate (d) {
+      this.showDate = d
+      this.getEventsByUser()
+    },
     typeEvent (type) {
       this.eventCurrent.type = type
     },
@@ -313,13 +278,13 @@ export default {
         this.updateEvent()
       }
     },
-    addEvent () {
+    addEvent (d) {
       if (!this.user.hasRole['viewer']) {
         this.action = 'Crear'
         this.errors = {}
         this.eventCurrent= {}
         this.eventCurrent.type = 'event'
-        this.eventCurrent.date = Vue.moment().format('YYYY-MM-DD')
+        this.eventCurrent.date = Vue.moment(d).format('YYYY-MM-DD')
         $('#myTab li:first-child a').tab('show')
         $('#eventModal').modal('show')
       }
@@ -344,12 +309,12 @@ export default {
         })
       }
     },
-    editEvent (event) {
+    editEvent (e) {
       this.action = 'Editar'
       this.errors = {}
-      this.eventCurrent = event
-      this.eventCurrent.date = event.date
-      this.eventCurrent.index = this.events.findIndex(x => x.id === event.id)
+      this.eventCurrent = e.originalEvent
+      this.eventCurrent.date = e.originalEvent.date
+      this.eventCurrent.index = this.events.findIndex(x => x.id === e.originalEvent.id)
       if (this.eventCurrent.type == 'event') {
         $('#myTab li:first-child a').tab('show')
       } else {

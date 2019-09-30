@@ -98,3 +98,14 @@
     bottom: 3% !important;
   }
 }
+
+// Multiselect
+.multiselect, .multiselect__content-wrapper {
+  z-index: 1001;
+}
+
+// calendar
+.drag-calendar .arrow:hover {
+  background-color: none !important;
+  box-shadow: none !important;
+}

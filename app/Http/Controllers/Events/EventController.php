@@ -14,6 +14,17 @@ class EventController extends Controller
         return Event::with('artist', 'creator', 'editor')->get();
     }
 
+    public function byDay(Request $request)
+    {
+        $dt = Carbon::parse($request->date);
+        return Event::with('artist', 'creator', 'editor')
+            ->where('artist_id', $request->userId)
+            ->whereDay('date', $dt->day)
+            ->whereMonth('date', $dt->month)
+            ->whereYear('date', $dt->year)
+            ->get();
+    }
+
     public function byUser(Request $request)
     {
         $dt = Carbon::parse($request->date);

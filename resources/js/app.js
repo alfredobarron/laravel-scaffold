@@ -18,6 +18,7 @@ import Multiselect from 'vue-multiselect'
 import swal from 'sweetalert'
 import VueContentPlaceholders from 'vue-content-placeholders'
 import { CalendarView, CalendarViewHeader } from "vue-simple-calendar"
+import DraggableCal from 'vue-draggable-cal';
 
 Vue.use(require('vue-moment'))
 Vue.use(Toasted)
@@ -30,6 +31,7 @@ Vue.component('multiselect', Multiselect)
 Vue.use(VueContentPlaceholders)
 Vue.component('calendar-view', CalendarView)
 Vue.component('calendar-view-header', CalendarViewHeader)
+Vue.component('DraggableCal', DraggableCal)
 
 
 /**
