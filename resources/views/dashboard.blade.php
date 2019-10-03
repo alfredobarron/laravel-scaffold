@@ -24,34 +24,6 @@
                     </a>
                 </div>
                 @endcan
-                @can('read-events')
-                <div class="col-md-6">
-                    <a href="/events/v2" class="text-decoration-none">
-                    <div class="card">
-                        <div class="card-body p-0 d-flex align-items-center">
-                            <i class="fa fa-calendar bg-warning p-4 font-2xl mr-3"></i>
-                            <div>
-                                <div class="text-value-sm text-warning text-decoration-none">Eventos v2</div>
-                            </div>
-                        </div>
-                    </div>
-                    </a>
-                </div>
-                @endcan
-                @can('read-events')
-                <div class="col-md-6">
-                    <a href="/events/v3" class="text-decoration-none">
-                    <div class="card">
-                        <div class="card-body p-0 d-flex align-items-center">
-                            <i class="fa fa-calendar bg-warning p-4 font-2xl mr-3"></i>
-                            <div>
-                                <div class="text-value-sm text-warning text-decoration-none">Eventos v3</div>
-                            </div>
-                        </div>
-                    </div>
-                    </a>
-                </div>
-                @endcan
                 @can('read-quotes')
                 <div class="col-md-6">
                     <a href="/quotes" class="text-decoration-none">

@@ -4,8 +4,6 @@ Route::middleware('auth')->group(function () {
         // views
         Route::group(['prefix' => 'events'], function() {
             Route::view('/', 'events.index')->middleware('permission:read-events');
-            Route::view('/v2', 'events.v2')->middleware('permission:read-events');
-            Route::view('/v3', 'events.v3')->middleware('permission:read-events');
             // Route::view('/create', 'events.create')->middleware('permission:create-events');
             // Route::view('/{user}/edit', 'events.edit')->middleware('permission:update-events');
         });

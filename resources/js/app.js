@@ -17,10 +17,8 @@ import VueClip from 'vue-clip'
 import Multiselect from 'vue-multiselect'
 import swal from 'sweetalert'
 import VueContentPlaceholders from 'vue-content-placeholders'
-import { CalendarView, CalendarViewHeader } from "vue-simple-calendar"
-import DraggableCal from 'vue-draggable-cal';
+//import { CalendarView, CalendarViewHeader } from "vue-simple-calendar"
 import { FunctionalCalendar } from 'vue-functional-calendar'
-import VCalendar from 'v-calendar';
 
 Vue.use(require('vue-moment'))
 Vue.use(Toasted)
@@ -31,11 +29,9 @@ Vue.toasted.register('error', message => message, {
 Vue.use(VueClip)
 Vue.component('multiselect', Multiselect)
 Vue.use(VueContentPlaceholders)
-Vue.component('calendar-view', CalendarView)
-Vue.component('calendar-view-header', CalendarViewHeader)
-Vue.component('DraggableCal', DraggableCal)
+//Vue.component('calendar-view', CalendarView)
+//Vue.component('calendar-view-header', CalendarViewHeader)
 Vue.component('FunctionalCalendar', FunctionalCalendar)
-Vue.use(VCalendar)
 
 
 
@@ -68,8 +64,6 @@ Vue.component('roles-edit', require('./components/roles/Edit.vue'));
 
 // Events
 Vue.component('events-index', require('./components/events/Index.vue'));
-Vue.component('events-index-v2', require('./components/events/Index-v2.vue'));
-Vue.component('events-index-v3', require('./components/events/Index-v3.vue'));
 
 // Quotes Companies
 Vue.component('quotes-companies-index', require('./components/quotesCompanies/Index.vue'));
