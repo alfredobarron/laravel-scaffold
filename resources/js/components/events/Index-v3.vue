@@ -289,6 +289,7 @@ export default {
     //   })
     // },
     getEventsByUser () {
+      this.events = []
       this.markedDates = []
       this.isLoading = true
       axios.post(`/api/events/byUser`, {userId: this.userCurrent.id, date: this.dateCurrent})
@@ -316,7 +317,6 @@ export default {
       this.getEventsByUser()
     },
     changeMonthYear (date) {
-      console.log(date);
       this.dateCurrent = date
       this.getEventsByUser()
     },

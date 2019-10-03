@@ -75826,6 +75826,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     getEventsByUser: function getEventsByUser() {
       var _this3 = this;
 
+      this.events = [];
       this.markedDates = [];
       this.isLoading = true;
       axios.post('/api/events/byUser', { userId: this.userCurrent.id, date: this.dateCurrent }).then(function (response) {
@@ -75851,7 +75852,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.getEventsByUser();
     },
     changeMonthYear: function changeMonthYear(date) {
-      console.log(date);
       this.dateCurrent = date;
       this.getEventsByUser();
     },
