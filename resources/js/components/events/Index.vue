@@ -17,7 +17,10 @@
     </div>
     <div class="card-body px-0">
       <div class="row">
-        <div class="col-12 pb-3">
+        <div class="col-12 pb-3 text-center">
+          <a href="#" class="btn btn-primary btn-block" @click.prevent="addEvent"><i class="fas fa-plus"></i><span class="ml-1">Crear evento</span></a>
+        </div>
+        <div class="col-12 pb-2">
           <FunctionalCalendar
             ref="Calendar"
             v-model="calendar"
@@ -28,9 +31,6 @@
             @changedYear="changeMonthYear">
           </FunctionalCalendar>
         </div>
-        <div class="col-12 text-center">
-          <a href="#" class="btn btn-primary btn-block" @click.prevent="addEvent"><i class="fas fa-plus"></i><span class="ml-1">Crear evento</span></a>
-        </div>
         <div class="col-12 pt-3">
           <content-placeholders v-if="isLoading">
             <content-placeholders-text/>
@@ -38,14 +38,16 @@
           <ul class="list-group">
             <li class="list-group-item mb-1" v-for="item in events" @click="editEvent(item)">
               <div class="row">
-                <div class="col-12">
-                  <p class="pre-line mb-1">{{item.title}}</p>
-                  <div class="text-muted">{{item.description}}</div>
-                  <div class="text-muted"><small><i class="icon-location-pin mr-1"></i>{{item.place}}</small></div>
-                  <div>
-                    <small class="text-muted">
-                      <i class="far fa-clock mr-1"></i>{{item.date | moment('LL')}} | {{item.schedule}}
-                    </small>
+                <div class="col-auto text-center">
+                  <i class="icon-calendar"></i>
+                  <p class="lead mb-0">{{item.date | moment('D')}}</p>
+                </div>
+                <div class="col">
+                  <p class="pre-line mb-1"><strong>{{item.title}}</strong></p>
+                  <div class="text-muted mb-2">{{item.description}}</div>
+                  <div class="text-muted"><i class="icon-location-pin mr-1"></i>{{item.place}}</div>
+                  <div class="">
+                    <i class="far fa-clock mr-1"></i>{{item.schedule}}
                   </div>
                 </div>
               </div>

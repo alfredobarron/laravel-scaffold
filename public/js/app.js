@@ -74136,6 +74136,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -74397,9 +74399,29 @@ var render = function() {
     _vm._v(" "),
     _c("div", { staticClass: "card-body px-0" }, [
       _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "col-12 pb-3 text-center" }, [
+          _c(
+            "a",
+            {
+              staticClass: "btn btn-primary btn-block",
+              attrs: { href: "#" },
+              on: {
+                click: function($event) {
+                  $event.preventDefault()
+                  return _vm.addEvent($event)
+                }
+              }
+            },
+            [
+              _c("i", { staticClass: "fas fa-plus" }),
+              _c("span", { staticClass: "ml-1" }, [_vm._v("Crear evento")])
+            ]
+          )
+        ]),
+        _vm._v(" "),
         _c(
           "div",
-          { staticClass: "col-12 pb-3" },
+          { staticClass: "col-12 pb-2" },
           [
             _c("FunctionalCalendar", {
               ref: "Calendar",
@@ -74423,26 +74445,6 @@ var render = function() {
           ],
           1
         ),
-        _vm._v(" "),
-        _c("div", { staticClass: "col-12 text-center" }, [
-          _c(
-            "a",
-            {
-              staticClass: "btn btn-primary btn-block",
-              attrs: { href: "#" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.addEvent($event)
-                }
-              }
-            },
-            [
-              _c("i", { staticClass: "fas fa-plus" }),
-              _c("span", { staticClass: "ml-1" }, [_vm._v("Crear evento")])
-            ]
-          )
-        ]),
         _vm._v(" "),
         _c(
           "div",
@@ -74468,32 +74470,31 @@ var render = function() {
                   },
                   [
                     _c("div", { staticClass: "row" }, [
-                      _c("div", { staticClass: "col-12" }, [
+                      _c("div", { staticClass: "col-auto text-center" }, [
+                        _c("i", { staticClass: "icon-calendar" }),
+                        _vm._v(" "),
+                        _c("p", { staticClass: "lead mb-0" }, [
+                          _vm._v(_vm._s(_vm._f("moment")(item.date, "D")))
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col" }, [
                         _c("p", { staticClass: "pre-line mb-1" }, [
-                          _vm._v(_vm._s(item.title))
+                          _c("strong", [_vm._v(_vm._s(item.title))])
                         ]),
                         _vm._v(" "),
-                        _c("div", { staticClass: "text-muted" }, [
+                        _c("div", { staticClass: "text-muted mb-2" }, [
                           _vm._v(_vm._s(item.description))
                         ]),
                         _vm._v(" "),
                         _c("div", { staticClass: "text-muted" }, [
-                          _c("small", [
-                            _c("i", { staticClass: "icon-location-pin mr-1" }),
-                            _vm._v(_vm._s(item.place))
-                          ])
+                          _c("i", { staticClass: "icon-location-pin mr-1" }),
+                          _vm._v(_vm._s(item.place))
                         ]),
                         _vm._v(" "),
-                        _c("div", [
-                          _c("small", { staticClass: "text-muted" }, [
-                            _c("i", { staticClass: "far fa-clock mr-1" }),
-                            _vm._v(
-                              _vm._s(_vm._f("moment")(item.date, "LL")) +
-                                " | " +
-                                _vm._s(item.schedule) +
-                                "\n                  "
-                            )
-                          ])
+                        _c("div", {}, [
+                          _c("i", { staticClass: "far fa-clock mr-1" }),
+                          _vm._v(_vm._s(item.schedule) + "\n                ")
                         ])
                       ])
                     ])
