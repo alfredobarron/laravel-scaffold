@@ -28,10 +28,10 @@ class EventController extends Controller
     public function byUser(Request $request)
     {
         $dt = Carbon::parse($request->date);
-        return Event::with('artist', 'creator', 'editor')
-            ->where('artist_id', $request->userId)
+        return Event::where('artist_id', $request->userId)
             ->whereMonth('date', $dt->month)
             ->whereYear('date', $dt->year)
+            ->orderBy('date')
             ->get();
     }
 
