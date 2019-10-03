@@ -74163,14 +74163,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   mounted: function mounted() {
     this.getUsers();
     //this.getEvents()
-    this.getEventsByUser();
-    this.loadEvents();
+    this.getEventsByMonth();
+    //this.getEventsByDay()
   },
 
   watch: {
     "calendar.selectedDate": function calendarSelectedDate(date) {
       this.dateCurrent = date;
-      this.loadEvents();
+      this.getEventsByDay();
     }
   },
   methods: {
@@ -74186,7 +74186,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         _this.isLoading = false;
       });
     },
-    loadEvents: function loadEvents() {
+    getEventsByDay: function getEventsByDay() {
       var _this2 = this;
 
       this.events = [];
@@ -74209,13 +74209,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     //     this.errors = error.response.data.errors
     //   })
     // },
-    getEventsByUser: function getEventsByUser() {
+    getEventsByMonth: function getEventsByMonth() {
       var _this3 = this;
 
       this.events = [];
       this.markedDates = [];
       this.isLoading = true;
-      axios.post('/api/events/byUser', { userId: this.userCurrent.id, date: this.dateCurrent }).then(function (response) {
+      axios.post('/api/events/byMonth', { userId: this.userCurrent.id, date: this.dateCurrent }).then(function (response) {
         var dates = response.data.map(function (obj) {
           // let item = {
           //   date: Vue.moment(obj.date).format('YYYY-M-D'),
@@ -74227,6 +74227,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         _this3.markedDates = dates;
         _this3.$refs.Calendar.fConfigs.markedDates = dates;
         _this3.$refs.Calendar.markChooseDays();
+        _this3.events = response.data;
         _this3.isLoading = false;
       }).catch(function (error) {
         _this3.errors = error.response.data.errors;
@@ -74235,11 +74236,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     changeUser: function changeUser(user) {
       this.userCurrent = user;
-      this.getEventsByUser();
+      this.getEventsByMonth();
     },
     changeMonthYear: function changeMonthYear(date) {
       this.dateCurrent = date;
-      this.getEventsByUser();
+      this.getEventsByMonth();
     },
 
     // removeUser () {
@@ -74247,7 +74248,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     // },
     // setdateCurrent (d) {
     //   this.dateCurrent = d
-    //   this.getEventsByUser()
+    //   this.getEventsByMonth()
     // },
     typeEvent: function typeEvent(type) {
       this.eventCurrent.type = type;
@@ -74291,41 +74292,47 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       }
     },
     editEvent: function editEvent(event) {
+      var _this5 = this;
+
       this.action = 'Editar';
       this.errors = {};
-      this.eventCurrent = event;
-      this.eventCurrent.date = event.date;
-      this.eventCurrent.index = this.events.findIndex(function (x) {
-        return x.id === event.id;
+      axios.get('/api/events/' + event.id).then(function (response) {
+        _this5.eventCurrent = response.data;
+        //this.eventCurrent.date = response.data.date
+        _this5.eventCurrent.index = _this5.events.findIndex(function (x) {
+          return x.id === response.data.id;
+        });
+        if (_this5.eventCurrent.type == 'event') {
+          $('#myTab li:first-child a').tab('show');
+        } else {
+          $('#myTab li:last-child a').tab('show');
+        }
+        $('#eventModal').modal('show');
+      }).catch(function (error) {
+        _this5.$toasted.global.error('¡Elevento no existe!');
       });
-      if (this.eventCurrent.type == 'event') {
-        $('#myTab li:first-child a').tab('show');
-      } else {
-        $('#myTab li:last-child a').tab('show');
-      }
-      $('#eventModal').modal('show');
     },
     updateEvent: function updateEvent() {
-      var _this5 = this;
+      var _this6 = this;
 
       if (!this.submiting) {
         this.submiting = true;
         axios.put('/api/events/update/' + this.eventCurrent.id, this.eventCurrent).then(function (response) {
-          _this5.events[_this5.eventCurrent.index] = response.data;
-          _this5.eventCurrent = {};
+          _this6.events[_this6.eventCurrent.index] = response.data;
+          _this6.eventCurrent = {};
           $('#eventModal').modal('hide');
-          _this5.$toasted.global.error('Evento actualizado!');
+          _this6.$toasted.global.error('Evento actualizado!');
         }).catch(function (error) {
           if (error.response) {
-            _this5.errors = error.response.data.errors;
+            _this6.errors = error.response.data.errors;
           }
         }).then(function (response) {
-          _this5.submiting = false;
+          _this6.submiting = false;
         });
       }
     },
     deleteEvent: function deleteEvent() {
-      var _this6 = this;
+      var _this7 = this;
 
       if (!this.submitingDelete) {
         this.submitingDelete = true;
@@ -74337,15 +74344,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
           dangerMode: true
         }).then(function (willDelete) {
           if (willDelete) {
-            axios.delete('/api/events/' + _this6.eventCurrent.id).then(function (response) {
-              _this6.events.splice(_this6.eventCurrent.index, 1);
-              _this6.$toasted.global.error('Evento borrado!');
+            axios.delete('/api/events/' + _this7.eventCurrent.id).then(function (response) {
+              _this7.events.splice(_this7.eventCurrent.index, 1);
+              _this7.$toasted.global.error('Evento borrado!');
               $('#eventModal').modal('hide');
             }).catch(function (error) {
-              _this6.errors = error.response.data.errors;
+              _this7.errors = error.response.data.errors;
             });
           }
-          _this6.submitingDelete = false;
+          _this7.submitingDelete = false;
         });
       }
     }

@@ -246,13 +246,13 @@ export default {
   mounted () {
     this.getUsers()
     //this.getEvents()
-    this.getEventsByUser()
-    this.loadEvents()
+    this.getEventsByMonth()
+    //this.getEventsByDay()
   },
   watch: {
     "calendar.selectedDate": function (date) {
       this.dateCurrent = date
-      this.loadEvents()
+      this.getEventsByDay()
     }
   },
   methods: {
@@ -268,7 +268,7 @@ export default {
         this.isLoading = false
       })
     },
-    loadEvents () {
+    getEventsByDay () {
       this.events = []
       this.isLoading = true
       axios.post(`/api/events/byDay`, {userId: this.userCurrent.id, date: this.calendar.selectedDate})
@@ -290,11 +290,11 @@ export default {
     //     this.errors = error.response.data.errors
     //   })
     // },
-    getEventsByUser () {
+    getEventsByMonth () {
       this.events = []
       this.markedDates = []
       this.isLoading = true
-      axios.post(`/api/events/byUser`, {userId: this.userCurrent.id, date: this.dateCurrent})
+      axios.post(`/api/events/byMonth`, {userId: this.userCurrent.id, date: this.dateCurrent})
       .then(response => {
         let dates = response.data.map(obj => {
           // let item = {
@@ -307,6 +307,7 @@ export default {
         this.markedDates = dates
         this.$refs.Calendar.fConfigs.markedDates = dates;
         this.$refs.Calendar.markChooseDays();
+        this.events = response.data
         this.isLoading = false
       })
       .catch(error => {
@@ -316,18 +317,18 @@ export default {
     },
     changeUser (user) {
       this.userCurrent = user
-      this.getEventsByUser()
+      this.getEventsByMonth()
     },
     changeMonthYear (date) {
       this.dateCurrent = date
-      this.getEventsByUser()
+      this.getEventsByMonth()
     },
     // removeUser () {
     //   this.getEvents()
     // },
     // setdateCurrent (d) {
     //   this.dateCurrent = d
-    //   this.getEventsByUser()
+    //   this.getEventsByMonth()
     // },
     typeEvent (type) {
       this.eventCurrent.type = type
@@ -374,15 +375,21 @@ export default {
     editEvent (event) {
       this.action = 'Editar'
       this.errors = {}
-      this.eventCurrent = event
-      this.eventCurrent.date = event.date
-      this.eventCurrent.index = this.events.findIndex(x => x.id === event.id)
-      if (this.eventCurrent.type == 'event') {
-        $('#myTab li:first-child a').tab('show')
-      } else {
-        $('#myTab li:last-child a').tab('show')
-      }
-      $('#eventModal').modal('show')
+      axios.get(`/api/events/${event.id}`)
+      .then(response => {
+        this.eventCurrent = response.data
+        //this.eventCurrent.date = response.data.date
+        this.eventCurrent.index = this.events.findIndex(x => x.id === response.data.id)
+        if (this.eventCurrent.type == 'event') {
+          $('#myTab li:first-child a').tab('show')
+        } else {
+          $('#myTab li:last-child a').tab('show')
+        }
+        $('#eventModal').modal('show')
+      })
+      .catch(error => {
+        this.$toasted.global.error('¡Elevento no existe!')
+      })
     },
     updateEvent () {
       if (!this.submiting) {

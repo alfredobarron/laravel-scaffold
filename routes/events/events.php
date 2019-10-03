@@ -13,9 +13,9 @@ Route::middleware('auth')->group(function () {
             //Route::post('/filter', 'EventController@filter')->middleware('permission:read-events');
             Route::get('/all', 'EventController@all')->middleware('permission:read-events');
             Route::post('/byDay', 'EventController@byDay')->middleware('permission:read-events');
-            Route::post('/byUser', 'EventController@byUser')->middleware('permission:read-events');
+            Route::post('/byMonth', 'EventController@byMonth')->middleware('permission:read-events');
 
-            //Route::get('/{user}', 'EventController@show')->middleware('permission:read-events');
+            Route::get('/{user}', 'EventController@show')->middleware('permission:read-events');
             Route::post('/store', 'EventController@store')->middleware('permission:create-events');
             Route::put('/update/{user}', 'EventController@update')->middleware('permission:update-events');
             Route::delete('/{user}', 'EventController@destroy')->middleware('permission:delete-events');
