@@ -22,8 +22,6 @@
             ref="Calendar"
             v-model="calendar"
             :marked-dates="markedDates"
-            :change-month-function="true"
-            :change-year-function="true"
             :is-date-picker="true"
             :date-format="'yyyy-mm-dd'"
             @changedMonth="changeMonthYear"
@@ -318,6 +316,7 @@ export default {
       this.getEventsByUser()
     },
     changeMonthYear (date) {
+      console.log(date);
       this.dateCurrent = date
       this.getEventsByUser()
     },

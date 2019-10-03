@@ -75752,8 +75752,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -75853,6 +75851,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.getEventsByUser();
     },
     changeMonthYear: function changeMonthYear(date) {
+      console.log(date);
       this.dateCurrent = date;
       this.getEventsByUser();
     },
@@ -76022,8 +76021,6 @@ var render = function() {
               ref: "Calendar",
               attrs: {
                 "marked-dates": _vm.markedDates,
-                "change-month-function": true,
-                "change-year-function": true,
                 "is-date-picker": true,
                 "date-format": "yyyy-mm-dd"
               },
