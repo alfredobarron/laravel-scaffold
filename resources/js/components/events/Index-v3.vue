@@ -291,6 +291,7 @@ export default {
     //   })
     // },
     getEventsByUser () {
+      this.markedDates = []
       this.isLoading = true
       axios.post(`/api/events/byUser`, {userId: this.userCurrent.id, date: this.dateCurrent})
       .then(response => {

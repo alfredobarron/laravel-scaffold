@@ -75828,6 +75828,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     getEventsByUser: function getEventsByUser() {
       var _this3 = this;
 
+      this.markedDates = [];
       this.isLoading = true;
       axios.post('/api/events/byUser', { userId: this.userCurrent.id, date: this.dateCurrent }).then(function (response) {
         var dates = response.data.map(function (obj) {
