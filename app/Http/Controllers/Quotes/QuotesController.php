@@ -12,6 +12,10 @@ class QuotesController extends Controller
     {
         $query = Quotes::query();
 
+        if ($request->agentId) {
+          $query->where('agent_id', $request->agentId);
+        }
+
         if($request->search) {
             $query->where('name', 'LIKE', '%'.$request->search.'%');
         }
@@ -64,8 +68,10 @@ class QuotesController extends Controller
             'client' => $request->client,
             'client_email' => $request->client_email,
             'client_phone' => $request->client_phone,
+            'artist' => $request->artist['name'],
             'artist_id' => $request->artist['id'],
             'artist_cost' => $request->artist_cost,
+            'agent' => $request->agent['name'],
             'agent_id' => $request->agent['id'],
             'agent_phone' => $request->agent_phone,
             'event_coordination' => $request->event_coordination,
@@ -131,8 +137,10 @@ class QuotesController extends Controller
         $quote->client = $request->client;
         $quote->client_email = $request->client_email;
         $quote->client_phone = $request->client_phone;
+        $quote->artist = $request->artist['name'];
         $quote->artist_id = $request->artist['id'];
         $quote->artist_cost = $request->artist_cost;
+        $quote->agent = $request->agent['name'];
         $quote->agent_id = $request->agent['id'];
         $quote->agent_phone = $request->agent_phone;
         $quote->event_coordination = $request->event_coordination;

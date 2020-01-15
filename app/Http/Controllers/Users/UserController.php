@@ -112,4 +112,9 @@ class UserController extends Controller
 
         return $user;
     }
+
+    public function getAgents ()
+    {
+        return User::role('vendedor')->get();
+    }
 }

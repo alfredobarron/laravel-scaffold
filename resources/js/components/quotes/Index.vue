@@ -18,6 +18,18 @@
             <input type="text" class="form-control" placeholder="Seach" v-model.trim="filters.search" @keyup.enter="filter">
           </div>
         </div>
+        <div class="col-auto" v-if="!user.hasRole['vendedor']">
+          <multiselect
+            v-model="userCurrent"
+            :options="users"
+            openDirection="bottom"
+            track-by="id"
+            label="name"
+            :loading="loading"
+            @select="changeUser"
+            @remove="removeUser">
+          </multiselect>
+        </div>
         <div class="col-auto">
           <multiselect
             v-model="filters.pagination.per_page"
@@ -30,42 +42,68 @@
           </multiselect>
         </div>
       </div>
+      <div class="table-responsive">
       <table class="table table-hover">
         <thead>
           <tr>
-            <th class="d-none d-sm-table-cell">
+            <!-- <th class="d-none d-sm-table-cell">
               <a href="#" class="text-dark" @click.prevent="sort('id')">ID</a>
               <i class="mr-1 fas" :class="{'fa-long-arrow-alt-down': filters.orderBy.column == 'id' && filters.orderBy.direction == 'asc', 'fa-long-arrow-alt-up': filters.orderBy.column == 'id' && filters.orderBy.direction == 'desc'}"></i>
-            </th>
+            </th> -->
             <th>
-              <a href="#" class="text-dark" @click.prevent="sort('place')">Cotizacion</a>
+              <a href="#" class="text-dark" @click.prevent="sort('place')">Lugar</a>
               <i class="mr-1 fas" :class="{'fa-long-arrow-alt-down': filters.orderBy.column == 'place' && filters.orderBy.direction == 'asc', 'fa-long-arrow-alt-up': filters.orderBy.column == 'place' && filters.orderBy.direction == 'desc'}"></i>
             </th>
             <th>
-              <a href="#" class="text-dark" @click.prevent="sort('client')">Contacto</a>
+              <a href="#" class="text-dark" @click.prevent="sort('client')">Cliente</a>
               <i class="mr-1 fas" :class="{'fa-long-arrow-alt-down': filters.orderBy.column == 'client' && filters.orderBy.direction == 'asc', 'fa-long-arrow-alt-up': filters.orderBy.column == 'client' && filters.orderBy.direction == 'desc'}"></i>
             </th>
-            <th class="d-none d-sm-table-cell">
-              Teléfono
+            <th>
+              <a href="#" class="text-dark" @click.prevent="sort('artist')">Artista</a>
+              <i class="mr-1 fas" :class="{'fa-long-arrow-alt-down': filters.orderBy.column == 'artist' && filters.orderBy.direction == 'asc', 'fa-long-arrow-alt-up': filters.orderBy.column == 'artist' && filters.orderBy.direction == 'desc'}"></i>
+            </th>
+            <th>
+              <a href="#" class="text-dark" @click.prevent="sort('agent')">Vendedor</a>
+              <i class="mr-1 fas" :class="{'fa-long-arrow-alt-down': filters.orderBy.column == 'agent' && filters.orderBy.direction == 'asc', 'fa-long-arrow-alt-up': filters.orderBy.column == 'agent' && filters.orderBy.direction == 'desc'}"></i>
+            </th>
+            <th>Comentarios</th>
+            <th>
+              <a href="#" class="text-dark" @click.prevent="sort('status')">Estatus</a>
+              <i class="mr-1 fas" :class="{'fa-long-arrow-alt-down': filters.orderBy.column == 'status' && filters.orderBy.direction == 'asc', 'fa-long-arrow-alt-up': filters.orderBy.column == 'status' && filters.orderBy.direction == 'desc'}"></i>
             </th>
             <th class="d-none d-sm-table-cell"></th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="quote in quotes" @click="editQuote(quote.id)">
-            <td class="d-none d-sm-table-cell">{{quote.id}}</td>
+          <tr v-for="quote in quotes" @click="editQuote(quote.id)" :class="{'table-success': quote.status == 'Contrato', 'table-warning': quote.status == 'Pendiente', 'table-danger': quote.status == 'No Contrato'}">
+            <!-- <td class="d-none d-sm-table-cell">{{quote.id}}</td> -->
             <td>
               <div>{{quote.place}}</div>
               <div class="small text-muted">{{quote.date}}</div>
             </td>
             <td>
               <div>{{quote.client}}</div>
-              <div class="small text-muted">
-                {{quote.client_email}}
+              <div class="small text-muted" v-if="quote.client_phone">
+                {{quote.client_phone}}
               </div>
             </td>
-            <td class="d-none d-sm-table-cell">
-              <div class="small" v-if="quote.client_phone">{{quote.client_phone}}</div>
+            <td>
+              <div>{{quote.artist}}</div>
+              <div class="small text-muted" v-if="quote.artist_cost">
+                ${{quote.artist_cost}}
+              </div>
+            </td>
+            <td>
+              <div>{{quote.agent}}</div>
+              <div class="small text-muted" v-if="quote.origin">
+                {{quote.origin}}
+              </div>
+            </td>
+            <td>
+              {{quote.notes}}
+            </td>
+            <td>
+              {{quote.status}}
             </td>
             <td class="d-none d-sm-table-cell">
               <a href="#" class="text-muted"><i class="fas fa-pencil-alt"></i></a>
@@ -73,6 +111,7 @@
           </tr>
         </tbody>
       </table>
+      </div>
       <div class="row" v-if='!loading && filters.pagination.total > 0'>
         <div class="col pt-2">
           {{filters.pagination.from}}-{{filters.pagination.to}} of {{filters.pagination.total}}
@@ -114,7 +153,10 @@ export default {
   data () {
     return {
       quotes: [],
+      users: [],
+      userCurrent: Laravel.user,
       filters: {
+        agentId: null,
         pagination: {
           from: 0,
           to: 0,
@@ -132,18 +174,43 @@ export default {
       loading: true
     }
   },
+  props: ['user'],
   mounted () {
     if (localStorage.getItem("filtersTableQuotes")) {
       this.filters = JSON.parse(localStorage.getItem("filtersTableQuotes"))
     } else {
       localStorage.setItem("filtersTableQuotes", this.filters);
     }
+    if (this.user.hasRole['vendedor']) {
+      this.filters.agentId = this.userCurrent.id
+    } else {
+      this.userCurrent.id = 0
+    }
+    this.getAgents()
     this.getQuotes()
   },
   methods: {
+    getAgents () {
+      this.loading = true
+      axios.get(`/api/users/getAgents`)
+      .then(response => {
+        this.users = response.data
+        this.loading = false
+      })
+      .catch(error => {
+        this.errors = error.response.data.errors
+        this.loading = false
+      })
+    },
     getQuotes () {
       this.loading = true
       this.quotes = []
+
+      if (this.userCurrent.id > 0) {
+        this.filters.agentId = this.userCurrent.id
+      } else {
+        this.filters.agentId = null
+      }
 
       localStorage.setItem("filtersTableQuotes", JSON.stringify(this.filters));
 
@@ -154,6 +221,14 @@ export default {
         this.filters.pagination = response.data
         this.loading = false
       })
+    },
+    changeUser (user) {
+      this.userCurrent = user
+      this.getQuotes()
+    },
+    removeUser () {
+      this.userCurrent.id = 0
+      this.getQuotes()
     },
     editQuote (quoteId) {
       location.href = `/quotes/${quoteId}/edit`
