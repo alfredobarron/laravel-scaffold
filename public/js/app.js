@@ -71239,30 +71239,80 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       quotes: [],
-      users: [],
+      agents: [],
+      artists: [],
       userCurrent: Laravel.user,
+      filtersShow: true,
       filters: {
         agentId: null,
-        pagination: {
-          from: 0,
-          to: 0,
-          total: 0,
-          per_page: 25,
-          current_page: 1,
-          last_page: 0
-        },
+        date: {},
+        // pagination: {
+        //   from: 0,
+        //   to: 0,
+        //   total: 0,
+        //   per_page: 25,
+        //   current_page: 1,
+        //   last_page: 0
+        // },
         orderBy: {
           column: 'id',
           direction: 'asc'
         },
         search: ''
       },
-      loading: true
+      loading: true,
+      loadingFilters: false,
+      submiting: false
     };
   },
 
@@ -71278,25 +71328,40 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     } else {
       this.userCurrent.id = 0;
     }
-    this.getAgents();
-    this.getQuotes();
+    this.filtersShow = false, this.getQuotes();
   },
 
   methods: {
     getAgents: function getAgents() {
       var _this = this;
 
-      this.loading = true;
-      axios.get('/api/users/getAgents').then(function (response) {
-        _this.users = response.data;
-        _this.loading = false;
-      }).catch(function (error) {
-        _this.errors = error.response.data.errors;
-        _this.loading = false;
-      });
+      if (this.agents.length == 0) {
+        this.loadingFilters = true;
+        axios.get('/api/users/getAgents').then(function (response) {
+          _this.agents = response.data;
+          _this.loadingFilters = false;
+        }).catch(function (error) {
+          _this.errors = error.response.data.errors;
+          _this.loadingFilters = false;
+        });
+      }
+    },
+    getArtists: function getArtists() {
+      var _this2 = this;
+
+      if (this.artists.length == 0) {
+        this.loadingFilters = true;
+        axios.get('/api/users/getArtists').then(function (response) {
+          _this2.artists = response.data;
+          _this2.loadingFilters = false;
+        }).catch(function (error) {
+          _this2.errors = error.response.data.errors;
+          _this2.loadingFilters = false;
+        });
+      }
     },
     getQuotes: function getQuotes() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.loading = true;
       this.quotes = [];
@@ -71307,37 +71372,69 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         this.filters.agentId = null;
       }
 
-      localStorage.setItem("filtersTableQuotes", JSON.stringify(this.filters));
-
-      axios.post('/api/quotes/filter?page=' + this.filters.pagination.current_page, this.filters).then(function (response) {
-        _this2.quotes = response.data.data;
-        delete response.data.data;
-        _this2.filters.pagination = response.data;
-        _this2.loading = false;
+      axios.post('/api/quotes/filter', this.filters)
+      //axios.post(`/api/quotes/filter?page=${this.filters.pagination.current_page}`, this.filters)
+      .then(function (response) {
+        _this3.quotes = response.data;
+        //delete response.data.data
+        //this.filters.pagination = response.data
+        _this3.loading = false;
+        localStorage.setItem("filtersTableQuotes", JSON.stringify(_this3.filters));
       });
-    },
-    changeUser: function changeUser(user) {
-      this.userCurrent = user;
-      this.getQuotes();
-    },
-    removeUser: function removeUser() {
-      this.userCurrent.id = 0;
-      this.getQuotes();
     },
     editQuote: function editQuote(quoteId) {
       location.href = '/quotes/' + quoteId + '/edit';
     },
+    exportQuotes: function exportQuotes(e) {
+      var _this4 = this;
+
+      if (!this.submiting) {
+        this.submiting = true;
+        axios({
+          url: '/api/quotes/export',
+          data: this.filters,
+          method: 'POST',
+          responseType: 'blob' // important
+        })
+        //.post(`/api/quotes/export`, this.filters)
+        .then(function (response) {
+          var blob = new Blob([response.data]),
+              url = window.URL.createObjectURL(blob);
+          var link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', 'cotizaciones.xlsx'); //or any other extension
+          document.body.appendChild(link);
+          link.click();
+          //location.href = response.data;
+          _this4.submiting = false;
+        });
+      }
+    },
 
     // filters
+    showFilters: function showFilters() {
+      this.filtersShow = !this.filtersShow;
+      this.getAgents();
+      this.getArtists();
+    },
+    changeAgent: function changeAgent(user) {
+      this.userCurrent = user;
+      this.getQuotes();
+    },
+    removeAgent: function removeAgent() {
+      this.userCurrent.id = 0;
+      this.getQuotes();
+    },
     filter: function filter() {
-      this.filters.pagination.current_page = 1;
+      //this.filters.pagination.current_page = 1
       this.getQuotes();
     },
-    changeSize: function changeSize(perPage) {
-      this.filters.pagination.current_page = 1;
-      this.filters.pagination.per_page = perPage;
-      this.getQuotes();
-    },
+
+    // changeSize (perPage) {
+    //   this.filters.pagination.current_page = 1
+    //   this.filters.pagination.per_page = perPage
+    //   this.getQuotes()
+    // },
     sort: function sort(column) {
       if (column == this.filters.orderBy.column) {
         this.filters.orderBy.direction = this.filters.orderBy.direction == 'asc' ? 'desc' : 'asc';
@@ -71347,11 +71444,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       }
 
       this.getQuotes();
-    },
-    changePage: function changePage(page) {
-      this.filters.pagination.current_page = page;
-      this.getQuotes();
     }
+    // changePage (page) {
+    //   this.filters.pagination.current_page = page
+    //   this.getQuotes()
+    // }
+
   }
 });
 
@@ -71371,8 +71469,8 @@ var render = function() {
       { staticClass: "card-body px-0" },
       [
         _c("div", { staticClass: "row justify-content-between" }, [
-          _c("div", { staticClass: "col-7 col-md-5" }, [
-            _c("div", { staticClass: "input-group mb-3" }, [
+          _c("div", { staticClass: "col-6 col-md-5" }, [
+            _c("div", { staticClass: "input-group " }, [
               _c("div", { staticClass: "input-group-prepend" }, [
                 _c(
                   "span",
@@ -71421,60 +71519,165 @@ var render = function() {
             ])
           ]),
           _vm._v(" "),
-          !_vm.user.hasRole["vendedor"]
-            ? _c(
+          _c("div", { staticClass: "col-auto" }, [
+            _c(
+              "a",
+              {
+                staticClass: "btn btn-light mr-1",
+                attrs: { href: "#" },
+                on: {
+                  click: function($event) {
+                    $event.preventDefault()
+                    return _vm.showFilters($event)
+                  }
+                }
+              },
+              [
+                _c("i", { staticClass: "fas fa-filter" }),
+                _vm._v(" "),
+                _c("span", { staticClass: "d-md-down-none ml-1" }, [
+                  _vm._v("Filtrar")
+                ])
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "a",
+              {
+                staticClass: "btn btn-light",
+                attrs: { href: "#" },
+                on: {
+                  click: function($event) {
+                    $event.preventDefault()
+                    return _vm.exportQuotes($event)
+                  }
+                }
+              },
+              [
+                _vm.submiting
+                  ? _c("i", {
+                      staticClass: "fas fa-spinner fa-spin",
+                      attrs: { disabled: _vm.submiting }
+                    })
+                  : _c("i", { staticClass: "fas fa-file-excel" }),
+                _vm._v(" "),
+                _c("span", { staticClass: "d-md-down-none ml-1" }, [
+                  _vm._v("Exportar")
+                ])
+              ]
+            )
+          ])
+        ]),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.filtersShow,
+                expression: "filtersShow"
+              }
+            ],
+            staticClass: "row mt-3"
+          },
+          [
+            !_vm.user.hasRole["vendedor"]
+              ? _c("div", { staticClass: "col-md-4" }, [
+                  _c(
+                    "div",
+                    { staticClass: "form-group" },
+                    [
+                      _c("label", [_vm._v("Vendedor")]),
+                      _vm._v(" "),
+                      _c("multiselect", {
+                        attrs: {
+                          options: _vm.agents,
+                          openDirection: "bottom",
+                          "track-by": "id",
+                          label: "name",
+                          loading: _vm.loadingFilters
+                        },
+                        on: {
+                          select: _vm.changeAgent,
+                          remove: _vm.removeAgent
+                        },
+                        model: {
+                          value: _vm.userCurrent,
+                          callback: function($$v) {
+                            _vm.userCurrent = $$v
+                          },
+                          expression: "userCurrent"
+                        }
+                      })
+                    ],
+                    1
+                  )
+                ])
+              : _vm._e(),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-4" }, [
+              _c(
                 "div",
-                { staticClass: "col-auto" },
+                { staticClass: "form-group" },
                 [
+                  _c("label", [_vm._v("Artista")]),
+                  _vm._v(" "),
                   _c("multiselect", {
                     attrs: {
-                      options: _vm.users,
+                      options: _vm.artists,
                       openDirection: "bottom",
                       "track-by": "id",
                       label: "name",
-                      loading: _vm.loading
+                      loading: _vm.loadingFilters
                     },
-                    on: { select: _vm.changeUser, remove: _vm.removeUser },
+                    on: { select: _vm.getQuotes, remove: _vm.getQuotes },
                     model: {
-                      value: _vm.userCurrent,
+                      value: _vm.filters.artist,
                       callback: function($$v) {
-                        _vm.userCurrent = $$v
+                        _vm.$set(_vm.filters, "artist", $$v)
                       },
-                      expression: "userCurrent"
+                      expression: "filters.artist"
                     }
                   })
                 ],
                 1
               )
-            : _vm._e(),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "col-auto" },
-            [
-              _c("multiselect", {
-                attrs: {
-                  options: [25, 50, 100, 200],
-                  searchable: false,
-                  "show-labels": false,
-                  "allow-empty": false,
-                  placeholder: "Search"
-                },
-                on: { select: _vm.changeSize },
-                model: {
-                  value: _vm.filters.pagination.per_page,
-                  callback: function($$v) {
-                    _vm.$set(_vm.filters.pagination, "per_page", $$v)
-                  },
-                  expression: "filters.pagination.per_page"
-                }
-              })
-            ],
-            1
-          )
-        ]),
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-4" }, [
+              _c(
+                "div",
+                { staticClass: "form-group" },
+                [
+                  _c("label", [_vm._v("Fecha")]),
+                  _vm._v(" "),
+                  _c("FunctionalCalendar", {
+                    ref: "Calendar",
+                    attrs: {
+                      "is-date-range": true,
+                      "is-modal": true,
+                      "is-auto-closeable": true,
+                      "date-format": "yyyy-mm-dd"
+                    },
+                    on: { selectedDaysCount: _vm.getQuotes },
+                    model: {
+                      value: _vm.filters.date,
+                      callback: function($$v) {
+                        _vm.$set(_vm.filters, "date", $$v)
+                      },
+                      expression: "filters.date"
+                    }
+                  })
+                ],
+                1
+              )
+            ])
+          ]
+        ),
         _vm._v(" "),
-        _c("div", { staticClass: "table-responsive" }, [
+        _c("div", { staticClass: "table-responsive mt-2" }, [
           _c("table", { staticClass: "table table-hover" }, [
             _c("thead", [
               _c("tr", [
@@ -71651,7 +71854,7 @@ var render = function() {
                       _c("div", [_vm._v(_vm._s(quote.place))]),
                       _vm._v(" "),
                       _c("div", { staticClass: "small text-muted" }, [
-                        _vm._v(_vm._s(quote.date))
+                        _vm._v(_vm._s(_vm._f("moment")(quote.date, "LL")))
                       ])
                     ]),
                     _vm._v(" "),
@@ -71716,129 +71919,6 @@ var render = function() {
             )
           ])
         ]),
-        _vm._v(" "),
-        !_vm.loading && _vm.filters.pagination.total > 0
-          ? _c("div", { staticClass: "row" }, [
-              _c("div", { staticClass: "col pt-2" }, [
-                _vm._v(
-                  "\n        " +
-                    _vm._s(_vm.filters.pagination.from) +
-                    "-" +
-                    _vm._s(_vm.filters.pagination.to) +
-                    " of " +
-                    _vm._s(_vm.filters.pagination.total) +
-                    "\n      "
-                )
-              ]),
-              _vm._v(" "),
-              _vm.filters.pagination.last_page > 1
-                ? _c("div", { staticClass: "col" }, [
-                    _c("nav", { attrs: { "aria-label": "Page navigation" } }, [
-                      _c(
-                        "ul",
-                        { staticClass: "pagination justify-content-end" },
-                        [
-                          _c(
-                            "li",
-                            {
-                              staticClass: "page-item",
-                              class: {
-                                disabled:
-                                  _vm.filters.pagination.current_page <= 1
-                              }
-                            },
-                            [
-                              _c(
-                                "a",
-                                {
-                                  staticClass: "page-link",
-                                  attrs: { href: "#" },
-                                  on: {
-                                    click: function($event) {
-                                      $event.preventDefault()
-                                      _vm.changePage(
-                                        _vm.filters.pagination.current_page - 1
-                                      )
-                                    }
-                                  }
-                                },
-                                [_c("i", { staticClass: "fas fa-angle-left" })]
-                              )
-                            ]
-                          ),
-                          _vm._v(" "),
-                          _vm._l(_vm.filters.pagination.last_page, function(
-                            page
-                          ) {
-                            return _c(
-                              "li",
-                              {
-                                staticClass: "page-item",
-                                class: {
-                                  active:
-                                    _vm.filters.pagination.current_page == page
-                                }
-                              },
-                              [
-                                _vm.filters.pagination.current_page == page
-                                  ? _c("span", { staticClass: "page-link" }, [
-                                      _vm._v(_vm._s(page))
-                                    ])
-                                  : _c(
-                                      "a",
-                                      {
-                                        staticClass: "page-link",
-                                        attrs: { href: "#" },
-                                        on: {
-                                          click: function($event) {
-                                            $event.preventDefault()
-                                            _vm.changePage(page)
-                                          }
-                                        }
-                                      },
-                                      [_vm._v(_vm._s(page))]
-                                    )
-                              ]
-                            )
-                          }),
-                          _vm._v(" "),
-                          _c(
-                            "li",
-                            {
-                              staticClass: "page-item",
-                              class: {
-                                disabled:
-                                  _vm.filters.pagination.current_page >=
-                                  _vm.filters.pagination.last_page
-                              }
-                            },
-                            [
-                              _c(
-                                "a",
-                                {
-                                  staticClass: "page-link",
-                                  attrs: { href: "#" },
-                                  on: {
-                                    click: function($event) {
-                                      $event.preventDefault()
-                                      _vm.changePage(
-                                        _vm.filters.pagination.current_page + 1
-                                      )
-                                    }
-                                  }
-                                },
-                                [_c("i", { staticClass: "fas fa-angle-right" })]
-                              )
-                            ]
-                          )
-                        ],
-                        2
-                      )
-                    ])
-                  ])
-                : _vm._e()
-            ])
-          : _vm._e(),
         _vm._v(" "),
         !_vm.loading && !_vm.quotes.length > 0
           ? _c("div", { staticClass: "no-items-found text-center mt-5" }, [

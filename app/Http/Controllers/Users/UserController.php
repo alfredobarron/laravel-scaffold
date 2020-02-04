@@ -117,4 +117,9 @@ class UserController extends Controller
     {
         return User::role('vendedor')->get();
     }
+
+    public function getArtists ()
+    {
+        return User::role('comediante')->get();
+    }
 }

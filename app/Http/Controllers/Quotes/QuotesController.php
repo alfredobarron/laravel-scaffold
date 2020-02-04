@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Quotes;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Quotes\Quotes;
+use Carbon\Carbon;
+use App\Exports\QuotesExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class QuotesController extends Controller
 {
@@ -13,7 +16,17 @@ class QuotesController extends Controller
         $query = Quotes::query();
 
         if ($request->agentId) {
-          $query->where('agent_id', $request->agentId);
+            $query->where('agent_id', $request->agentId);
+        }
+
+        if ($request->artist) {
+            $query->where('artist_id', $request->artist['id']);
+        }
+
+        if ($request->date) {
+            $ds = Carbon::parse($request->date['dateRange']['start']['date']);
+            $de = Carbon::parse($request->date['dateRange']['end']['date']);
+            $query->whereBetween('date', [$ds, $de]);
         }
 
         if($request->search) {
@@ -21,7 +34,8 @@ class QuotesController extends Controller
         }
 
         $quotes = $query->orderBy($request->input('orderBy.column'), $request->input('orderBy.direction'))
-                    ->paginate($request->input('pagination.per_page'));
+                    //->paginate($request->input('pagination.per_page'));
+                    ->get();
 
         return $quotes;
     }
@@ -172,5 +186,29 @@ class QuotesController extends Controller
     public function destroy ($quote)
     {
         return Quotes::destroy($quote);
+    }
+
+    public function export(Request $request)
+    {
+        $quotes = $this->filter($request);
+
+        foreach ($quotes as $key => $value) {
+            $data[] = [
+                $value->date,
+                $value->place,
+                $value->client,
+                $value->client_phone,
+                $value->artist,
+                $value->artist_cost,
+                $value->agent,
+                $value->origin,
+                $value->status,
+                $value->notes,
+            ];
+        }
+
+        $export = new QuotesExport($data);
+
+        return Excel::download($export, 'cotizaciones.xlsx');
     }
 }

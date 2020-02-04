@@ -15,6 +15,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/filter', 'UserController@filter')->middleware('permission:read-users');
             Route::get('/all', 'UserController@all');
             Route::get('/getAgents', 'UserController@getAgents');
+            Route::get('/getArtists', 'UserController@getArtists');
 
             Route::get('/{user}', 'UserController@show')->middleware('permission:read-users');
             Route::post('/store', 'UserController@store')->middleware('permission:create-users');
