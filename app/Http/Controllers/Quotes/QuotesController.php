@@ -188,6 +188,19 @@ class QuotesController extends Controller
         return Quotes::destroy($quote);
     }
 
+    public function countPendientes (Request $request)
+    {
+        $query = Quotes::query();
+
+        if ($request->userId) {
+            $query->where('agent_id', $request->userId);
+        }
+
+        $quotes = $query->where('status', 'Pendiente')->count();
+
+        return $quotes;
+    }
+
     public function export(Request $request)
     {
         $quotes = $this->filter($request);

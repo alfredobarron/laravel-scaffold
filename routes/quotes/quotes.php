@@ -13,6 +13,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/filter', 'QuotesController@filter')->middleware('permission:read-quotes');
             // Route::get('/byCreator', 'QuotesController@byCreator')->middleware('permission:read-quotes');
             // Route::get('/all', 'QuotesController@all')->middleware('permission:read-quotes');
+            Route::post('/countPendientes', 'QuotesController@countPendientes')->middleware('permission:read-quotes');
             Route::post('/export', 'QuotesController@export')->middleware('permission:read-quotes');
 
             Route::get('/{quote}', 'QuotesController@show')->middleware('permission:read-quotes');

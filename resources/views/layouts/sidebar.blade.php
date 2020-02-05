@@ -16,14 +16,14 @@
             @can('read-quotes')
             <li class="nav-item">
                 <a class="nav-link" href="/quotes">
-                    <i class="nav-icon icon-note"></i> Cotizaciones
+                    <i class="nav-icon icon-doc"></i> Cotizaciones
                 </a>
             </li>
             @endcan
             @can('read-quotescompanies')
             <li class="nav-item">
                 <a class="nav-link" href="/quotesCompanies">
-                    <i class="nav-icon icon-note"></i> Cotizaciones Empresa
+                    <i class="nav-icon icon-doc"></i> Cotiz. Empresa
                 </a>
             </li>
             @endcan

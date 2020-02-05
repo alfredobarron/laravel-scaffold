@@ -17,7 +17,7 @@
                         <div class="card-body p-0 d-flex align-items-center">
                             <i class="fa fa-calendar bg-warning p-4 font-2xl mr-3"></i>
                             <div>
-                                <div class="text-value-sm text-warning text-decoration-none">Eventos</div>
+                                <div class="text-value-sm text-warning">Eventos</div>
                             </div>
                         </div>
                     </div>
@@ -32,6 +32,7 @@
                             <i class="fa fa-file bg-primary p-4 font-2xl mr-3"></i>
                             <div>
                                 <div class="text-value-sm text-primary">Cotizaciones</div>
+                                <quotes-count-pendientes></quotes-count-pendientes>
                             </div>
                         </div>
                     </div>
@@ -54,16 +55,16 @@
                 @endcan
                 @can('read-users')
                 <div class="col-md-6">
+                    <a href="/users" class="text-decoration-none">
                     <div class="card">
                         <div class="card-body p-0 d-flex align-items-center">
-                            <a href="/users" class="text-decoration-none">
                             <i class="fa fa-user bg-success p-4 font-2xl mr-3"></i>
-                            </a>
                             <div>
-                                <a href="/users" class="text-value-sm text-success">Usuarios</a>
+                                <div href="/users" class="text-value-sm text-success">Usuarios</div>
                             </div>
                         </div>
                     </div>
+                    </a>
                 </div>
                 @endcan
             </div>

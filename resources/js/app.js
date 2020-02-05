@@ -74,6 +74,7 @@ Vue.component('quotes-companies-edit', require('./components/quotesCompanies/Edi
 Vue.component('quotes-index', require('./components/quotes/Index.vue'));
 Vue.component('quotes-create', require('./components/quotes/Create.vue'));
 Vue.component('quotes-edit', require('./components/quotes/Edit.vue'));
+Vue.component('quotes-count-pendientes', require('./components/quotes/CountPendientes.vue'));
 
 const app = new Vue({
     el: '#app'
