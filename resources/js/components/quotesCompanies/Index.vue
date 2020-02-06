@@ -19,7 +19,16 @@
           </div>
         </div>
         <div class="col-auto">
-          <multiselect
+          <a class="btn btn-light mr-1" href="#" @click.prevent="showFilters">
+            <i class="fas fa-filter"></i>
+            <span class="d-md-down-none ml-1">Filtrar</span>
+          </a>
+          <a class="btn btn-light" href="#" @click.prevent="exportQuotes">
+            <i class="fas fa-spinner fa-spin" :disabled="submiting" v-if="submiting"></i>
+            <i class="fas fa-file-excel" v-else></i>
+            <span class="d-md-down-none ml-1">Exportar</span>
+          </a>
+          <!-- <multiselect
             v-model="filters.pagination.per_page"
             :options="[25,50,100,200]"
             :searchable="false"
@@ -27,9 +36,41 @@
             :allow-empty="false"
             @select="changeSize"
             placeholder="Search">
-          </multiselect>
+          </multiselect> -->
         </div>
       </div>
+      <div class="row mt-3" v-show="filtersShow">
+        <div class="col-md-4" v-if="!user.hasRole['vendedor']">
+          <div class="form-group">
+            <label>Vendedor</label>
+            <multiselect
+              v-model="userCurrent"
+              :options="agents"
+              openDirection="bottom"
+              track-by="id"
+              label="name"
+              :loading="loadingFilters"
+              @select="changeAgent"
+              @remove="removeAgent">
+            </multiselect>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label>Fecha</label>
+            <FunctionalCalendar
+              ref="Calendar"
+              v-model="filters.date"
+              :is-date-range="true"
+              :is-modal="true"
+              :is-auto-closeable="true"
+              :date-format="'yyyy-mm-dd'"
+              @selectedDaysCount="getQuotes">
+            </FunctionalCalendar>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive mt-2">
       <table class="table table-hover">
         <thead>
           <tr>
@@ -45,7 +86,7 @@
               <a href="#" class="text-dark" @click.prevent="sort('name')">Contacto</a>
               <i class="mr-1 fas" :class="{'fa-long-arrow-alt-down': filters.orderBy.column == 'name' && filters.orderBy.direction == 'asc', 'fa-long-arrow-alt-up': filters.orderBy.column == 'name' && filters.orderBy.direction == 'desc'}"></i>
             </th>
-            <th class="d-none d-sm-table-cell">
+            <th>
               Teléfonos
             </th>
             <th class="d-none d-sm-table-cell"></th>
@@ -64,7 +105,7 @@
                 {{quote.email}}
               </div>
             </td>
-            <td class="d-none d-sm-table-cell">
+            <td>
               <div class="small" v-if="quote.phone">{{quote.phone}}</div>
               <div class="small" v-if="quote.cellphone">{{quote.cellphone}}</div>
             </td>
@@ -74,7 +115,8 @@
           </tr>
         </tbody>
       </table>
-      <div class="row" v-if='!loading && filters.pagination.total > 0'>
+      </div>
+      <!-- <div class="row" v-if='!loading && filters.pagination.total > 0'>
         <div class="col pt-2">
           {{filters.pagination.from}}-{{filters.pagination.to}} of {{filters.pagination.total}}
         </div>
@@ -94,7 +136,7 @@
             </ul>
           </nav>
         </div>
-      </div>
+      </div> -->
       <div class="no-items-found text-center mt-5" v-if="!loading && !quotes.length > 0">
         <i class="icon-magnifier fa-3x text-muted"></i>
         <p class="mb-0 mt-3"><strong>Could not find any items</strong></p>
@@ -115,60 +157,131 @@ export default {
   data () {
     return {
       quotes: [],
+      agents: [],
+      userCurrent: Laravel.user,
+      filtersShow: true,
       filters: {
-        pagination: {
-          from: 0,
-          to: 0,
-          total: 0,
-          per_page: 25,
-          current_page: 1,
-          last_page: 0
+        agentId: null,
+        date: {
+          dateRange: {}
         },
+        // pagination: {
+        //   from: 0,
+        //   to: 0,
+        //   total: 0,
+        //   per_page: 25,
+        //   current_page: 1,
+        //   last_page: 0
+        // },
         orderBy: {
           column: 'id',
           direction: 'asc'
         },
         search: ''
       },
-      loading: true
+      loading: true,
+      loadingFilters: false,
+      submiting: false
     }
   },
+  props: ['user'],
   mounted () {
     if (localStorage.getItem("filtersTableQuotesCompanies")) {
       this.filters = JSON.parse(localStorage.getItem("filtersTableQuotesCompanies"))
     } else {
       localStorage.setItem("filtersTableQuotesCompanies", this.filters);
     }
+    if (this.user.hasRole['vendedor']) {
+      this.filters.agentId = this.userCurrent.id
+    } else {
+      this.userCurrent.id = 0
+    }
+    this.filtersShow = false,
     this.getQuotes()
   },
   methods: {
+    getAgents () {
+      if (this.agents.length == 0) {
+        this.loadingFilters = true
+        axios.get(`/api/users/getAgents`)
+        .then(response => {
+          this.agents = response.data
+          this.loadingFilters = false
+        })
+        .catch(error => {
+          this.errors = error.response.data.errors
+          this.loadingFilters = false
+        })
+      }
+    },
     getQuotes () {
       this.loading = true
       this.quotes = []
 
-      localStorage.setItem("filtersTableQuotesCompanies", JSON.stringify(this.filters));
+      if (this.userCurrent) {
+        this.filters.agentId = this.userCurrent.id
+      } else {
+        this.filters.agentId = null
+      }
 
-      axios.post(`/api/quotesCompanies/filter?page=${this.filters.pagination.current_page}`, this.filters)
+      axios.post(`/api/quotesCompanies/filter`, this.filters)
+      //axios.post(`/api/quotesCompanies/filter?page=${this.filters.pagination.current_page}`, this.filters)
       .then(response => {
-        this.quotes = response.data.data
-        delete response.data.data
-        this.filters.pagination = response.data
+        this.quotes = response.data
+        //delete response.data.data
+        //this.filters.pagination = response.data
         this.loading = false
+        localStorage.setItem("filtersTableQuotesCompanies", JSON.stringify(this.filters));
       })
     },
     editQuote (quoteId) {
       location.href = `/quotesCompanies/${quoteId}/edit`
     },
+    exportQuotes (e) {
+      if (!this.submiting) {
+        this.submiting = true
+        axios({
+          url: '/api/quotesCompanies/export',
+          data: this.filters,
+          method: 'POST',
+          responseType: 'blob', // important
+        })
+        //.post(`/api/quotes/export`, this.filters)
+        .then(response => {
+          let blob = new Blob([response.data]),
+          url = window.URL.createObjectURL(blob)
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', 'cotizacionesEmpresas.xlsx'); //or any other extension
+          document.body.appendChild(link);
+          link.click();
+          //location.href = response.data;
+          this.submiting = false
+        });
+      }
+    },
     // filters
+    showFilters () {
+      this.filtersShow = !this.filtersShow
+      this.getAgents()
+    },
+    changeAgent (user) {
+      this.userCurrent = user
+      this.getQuotes()
+    },
+    removeAgent () {
+      this.userCurrent = {}
+      this.getQuotes()
+    },
     filter() {
-      this.filters.pagination.current_page = 1
+      //this.filters.pagination.current_page = 1
       this.getQuotes()
     },
-    changeSize (perPage) {
-      this.filters.pagination.current_page = 1
-      this.filters.pagination.per_page = perPage
-      this.getQuotes()
-    },
+    // changeSize (perPage) {
+    //   this.filters.pagination.current_page = 1
+    //   this.filters.pagination.per_page = perPage
+    //   this.getQuotes()
+    // },
     sort (column) {
       if(column == this.filters.orderBy.column) {
         this.filters.orderBy.direction = this.filters.orderBy.direction == 'asc' ? 'desc' : 'asc'
@@ -178,11 +291,11 @@ export default {
       }
 
       this.getQuotes()
-    },
-    changePage (page) {
-      this.filters.pagination.current_page = page
-      this.getQuotes()
     }
+    // changePage (page) {
+    //   this.filters.pagination.current_page = page
+    //   this.getQuotes()
+    // }
   }
 }
 </script>

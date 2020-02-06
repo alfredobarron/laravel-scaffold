@@ -204,7 +204,9 @@ export default {
       filtersShow: true,
       filters: {
         agentId: null,
-        date: {},
+        date: {
+          dateRange: {}
+        },
         // pagination: {
         //   from: 0,
         //   to: 0,
@@ -272,7 +274,7 @@ export default {
       this.loading = true
       this.quotes = []
 
-      if (this.userCurrent.id > 0) {
+      if (this.userCurrent) {
         this.filters.agentId = this.userCurrent.id
       } else {
         this.filters.agentId = null
@@ -325,7 +327,7 @@ export default {
       this.getQuotes()
     },
     removeAgent () {
-      this.userCurrent.id = 0
+      this.userCurrent = {}
       this.getQuotes()
     },
     filter() {

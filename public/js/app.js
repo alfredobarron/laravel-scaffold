@@ -14375,7 +14375,7 @@ function applyToTag (styleElement, obj) {
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(17);
-module.exports = __webpack_require__(126);
+module.exports = __webpack_require__(129);
 
 
 /***/ }),
@@ -14464,12 +14464,13 @@ Vue.component('events-index', __webpack_require__(105));
 Vue.component('quotes-companies-index', __webpack_require__(108));
 Vue.component('quotes-companies-create', __webpack_require__(111));
 Vue.component('quotes-companies-edit', __webpack_require__(114));
+//Vue.component('quotes-companies-count-pendientes', require('./components/quotes/CountPendientes.vue'));
 
 // Quotes
 Vue.component('quotes-index', __webpack_require__(117));
 Vue.component('quotes-create', __webpack_require__(120));
 Vue.component('quotes-edit', __webpack_require__(123));
-Vue.component('quotes-count-pendientes', __webpack_require__(155));
+Vue.component('quotes-count-pendientes', __webpack_require__(126));
 
 var app = new Vue({
   el: '#app'
@@ -69491,68 +69492,185 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       quotes: [],
+      agents: [],
+      userCurrent: Laravel.user,
+      filtersShow: true,
       filters: {
-        pagination: {
-          from: 0,
-          to: 0,
-          total: 0,
-          per_page: 25,
-          current_page: 1,
-          last_page: 0
+        agentId: null,
+        date: {
+          dateRange: {}
         },
+        // pagination: {
+        //   from: 0,
+        //   to: 0,
+        //   total: 0,
+        //   per_page: 25,
+        //   current_page: 1,
+        //   last_page: 0
+        // },
         orderBy: {
           column: 'id',
           direction: 'asc'
         },
         search: ''
       },
-      loading: true
+      loading: true,
+      loadingFilters: false,
+      submiting: false
     };
   },
+
+  props: ['user'],
   mounted: function mounted() {
     if (localStorage.getItem("filtersTableQuotesCompanies")) {
       this.filters = JSON.parse(localStorage.getItem("filtersTableQuotesCompanies"));
     } else {
       localStorage.setItem("filtersTableQuotesCompanies", this.filters);
     }
-    this.getQuotes();
+    if (this.user.hasRole['vendedor']) {
+      this.filters.agentId = this.userCurrent.id;
+    } else {
+      this.userCurrent.id = 0;
+    }
+    this.filtersShow = false, this.getQuotes();
   },
 
   methods: {
-    getQuotes: function getQuotes() {
+    getAgents: function getAgents() {
       var _this = this;
+
+      if (this.agents.length == 0) {
+        this.loadingFilters = true;
+        axios.get('/api/users/getAgents').then(function (response) {
+          _this.agents = response.data;
+          _this.loadingFilters = false;
+        }).catch(function (error) {
+          _this.errors = error.response.data.errors;
+          _this.loadingFilters = false;
+        });
+      }
+    },
+    getQuotes: function getQuotes() {
+      var _this2 = this;
 
       this.loading = true;
       this.quotes = [];
 
-      localStorage.setItem("filtersTableQuotesCompanies", JSON.stringify(this.filters));
+      if (this.userCurrent) {
+        this.filters.agentId = this.userCurrent.id;
+      } else {
+        this.filters.agentId = null;
+      }
 
-      axios.post('/api/quotesCompanies/filter?page=' + this.filters.pagination.current_page, this.filters).then(function (response) {
-        _this.quotes = response.data.data;
-        delete response.data.data;
-        _this.filters.pagination = response.data;
-        _this.loading = false;
+      axios.post('/api/quotesCompanies/filter', this.filters)
+      //axios.post(`/api/quotesCompanies/filter?page=${this.filters.pagination.current_page}`, this.filters)
+      .then(function (response) {
+        _this2.quotes = response.data;
+        //delete response.data.data
+        //this.filters.pagination = response.data
+        _this2.loading = false;
+        localStorage.setItem("filtersTableQuotesCompanies", JSON.stringify(_this2.filters));
       });
     },
     editQuote: function editQuote(quoteId) {
       location.href = '/quotesCompanies/' + quoteId + '/edit';
     },
+    exportQuotes: function exportQuotes(e) {
+      var _this3 = this;
+
+      if (!this.submiting) {
+        this.submiting = true;
+        axios({
+          url: '/api/quotesCompanies/export',
+          data: this.filters,
+          method: 'POST',
+          responseType: 'blob' // important
+        })
+        //.post(`/api/quotes/export`, this.filters)
+        .then(function (response) {
+          var blob = new Blob([response.data]),
+              url = window.URL.createObjectURL(blob);
+          var link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', 'cotizacionesEmpresas.xlsx'); //or any other extension
+          document.body.appendChild(link);
+          link.click();
+          //location.href = response.data;
+          _this3.submiting = false;
+        });
+      }
+    },
 
     // filters
+    showFilters: function showFilters() {
+      this.filtersShow = !this.filtersShow;
+      this.getAgents();
+    },
+    changeAgent: function changeAgent(user) {
+      this.userCurrent = user;
+      this.getQuotes();
+    },
+    removeAgent: function removeAgent() {
+      this.userCurrent = {};
+      this.getQuotes();
+    },
     filter: function filter() {
-      this.filters.pagination.current_page = 1;
+      //this.filters.pagination.current_page = 1
       this.getQuotes();
     },
-    changeSize: function changeSize(perPage) {
-      this.filters.pagination.current_page = 1;
-      this.filters.pagination.per_page = perPage;
-      this.getQuotes();
-    },
+
+    // changeSize (perPage) {
+    //   this.filters.pagination.current_page = 1
+    //   this.filters.pagination.per_page = perPage
+    //   this.getQuotes()
+    // },
     sort: function sort(column) {
       if (column == this.filters.orderBy.column) {
         this.filters.orderBy.direction = this.filters.orderBy.direction == 'asc' ? 'desc' : 'asc';
@@ -69562,11 +69680,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       }
 
       this.getQuotes();
-    },
-    changePage: function changePage(page) {
-      this.filters.pagination.current_page = page;
-      this.getQuotes();
     }
+    // changePage (page) {
+    //   this.filters.pagination.current_page = page
+    //   this.getQuotes()
+    // }
+
   }
 });
 
@@ -69636,310 +69755,290 @@ var render = function() {
             ])
           ]),
           _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "col-auto" },
-            [
-              _c("multiselect", {
-                attrs: {
-                  options: [25, 50, 100, 200],
-                  searchable: false,
-                  "show-labels": false,
-                  "allow-empty": false,
-                  placeholder: "Search"
-                },
-                on: { select: _vm.changeSize },
-                model: {
-                  value: _vm.filters.pagination.per_page,
-                  callback: function($$v) {
-                    _vm.$set(_vm.filters.pagination, "per_page", $$v)
-                  },
-                  expression: "filters.pagination.per_page"
+          _c("div", { staticClass: "col-auto" }, [
+            _c(
+              "a",
+              {
+                staticClass: "btn btn-light mr-1",
+                attrs: { href: "#" },
+                on: {
+                  click: function($event) {
+                    $event.preventDefault()
+                    return _vm.showFilters($event)
+                  }
                 }
-              })
+              },
+              [
+                _c("i", { staticClass: "fas fa-filter" }),
+                _vm._v(" "),
+                _c("span", { staticClass: "d-md-down-none ml-1" }, [
+                  _vm._v("Filtrar")
+                ])
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "a",
+              {
+                staticClass: "btn btn-light",
+                attrs: { href: "#" },
+                on: {
+                  click: function($event) {
+                    $event.preventDefault()
+                    return _vm.exportQuotes($event)
+                  }
+                }
+              },
+              [
+                _vm.submiting
+                  ? _c("i", {
+                      staticClass: "fas fa-spinner fa-spin",
+                      attrs: { disabled: _vm.submiting }
+                    })
+                  : _c("i", { staticClass: "fas fa-file-excel" }),
+                _vm._v(" "),
+                _c("span", { staticClass: "d-md-down-none ml-1" }, [
+                  _vm._v("Exportar")
+                ])
+              ]
+            )
+          ])
+        ]),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.filtersShow,
+                expression: "filtersShow"
+              }
             ],
-            1
-          )
-        ]),
-        _vm._v(" "),
-        _c("table", { staticClass: "table table-hover" }, [
-          _c("thead", [
-            _c("tr", [
-              _c("th", { staticClass: "d-none d-sm-table-cell" }, [
-                _c(
-                  "a",
-                  {
-                    staticClass: "text-dark",
-                    attrs: { href: "#" },
-                    on: {
-                      click: function($event) {
-                        $event.preventDefault()
-                        _vm.sort("id")
-                      }
-                    }
-                  },
-                  [_vm._v("ID")]
-                ),
-                _vm._v(" "),
-                _c("i", {
-                  staticClass: "mr-1 fas",
-                  class: {
-                    "fa-long-arrow-alt-down":
-                      _vm.filters.orderBy.column == "id" &&
-                      _vm.filters.orderBy.direction == "asc",
-                    "fa-long-arrow-alt-up":
-                      _vm.filters.orderBy.column == "id" &&
-                      _vm.filters.orderBy.direction == "desc"
-                  }
-                })
-              ]),
-              _vm._v(" "),
-              _c("th", [
-                _c(
-                  "a",
-                  {
-                    staticClass: "text-dark",
-                    attrs: { href: "#" },
-                    on: {
-                      click: function($event) {
-                        $event.preventDefault()
-                        _vm.sort("company")
-                      }
-                    }
-                  },
-                  [_vm._v("Empresa")]
-                ),
-                _vm._v(" "),
-                _c("i", {
-                  staticClass: "mr-1 fas",
-                  class: {
-                    "fa-long-arrow-alt-down":
-                      _vm.filters.orderBy.column == "company" &&
-                      _vm.filters.orderBy.direction == "asc",
-                    "fa-long-arrow-alt-up":
-                      _vm.filters.orderBy.column == "company" &&
-                      _vm.filters.orderBy.direction == "desc"
-                  }
-                })
-              ]),
-              _vm._v(" "),
-              _c("th", [
-                _c(
-                  "a",
-                  {
-                    staticClass: "text-dark",
-                    attrs: { href: "#" },
-                    on: {
-                      click: function($event) {
-                        $event.preventDefault()
-                        _vm.sort("name")
-                      }
-                    }
-                  },
-                  [_vm._v("Contacto")]
-                ),
-                _vm._v(" "),
-                _c("i", {
-                  staticClass: "mr-1 fas",
-                  class: {
-                    "fa-long-arrow-alt-down":
-                      _vm.filters.orderBy.column == "name" &&
-                      _vm.filters.orderBy.direction == "asc",
-                    "fa-long-arrow-alt-up":
-                      _vm.filters.orderBy.column == "name" &&
-                      _vm.filters.orderBy.direction == "desc"
-                  }
-                })
-              ]),
-              _vm._v(" "),
-              _c("th", { staticClass: "d-none d-sm-table-cell" }, [
-                _vm._v("\n            Teléfonos\n          ")
-              ]),
-              _vm._v(" "),
-              _c("th", { staticClass: "d-none d-sm-table-cell" })
-            ])
-          ]),
-          _vm._v(" "),
-          _c(
-            "tbody",
-            _vm._l(_vm.quotes, function(quote) {
-              return _c(
-                "tr",
-                {
-                  on: {
-                    click: function($event) {
-                      _vm.editQuote(quote.id)
-                    }
-                  }
-                },
+            staticClass: "row mt-3"
+          },
+          [
+            !_vm.user.hasRole["vendedor"]
+              ? _c("div", { staticClass: "col-md-4" }, [
+                  _c(
+                    "div",
+                    { staticClass: "form-group" },
+                    [
+                      _c("label", [_vm._v("Vendedor")]),
+                      _vm._v(" "),
+                      _c("multiselect", {
+                        attrs: {
+                          options: _vm.agents,
+                          openDirection: "bottom",
+                          "track-by": "id",
+                          label: "name",
+                          loading: _vm.loadingFilters
+                        },
+                        on: {
+                          select: _vm.changeAgent,
+                          remove: _vm.removeAgent
+                        },
+                        model: {
+                          value: _vm.userCurrent,
+                          callback: function($$v) {
+                            _vm.userCurrent = $$v
+                          },
+                          expression: "userCurrent"
+                        }
+                      })
+                    ],
+                    1
+                  )
+                ])
+              : _vm._e(),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-4" }, [
+              _c(
+                "div",
+                { staticClass: "form-group" },
                 [
-                  _c("td", { staticClass: "d-none d-sm-table-cell" }, [
-                    _vm._v(_vm._s(quote.id))
-                  ]),
+                  _c("label", [_vm._v("Fecha")]),
                   _vm._v(" "),
-                  _c("td", [
-                    _c("div", [_vm._v(_vm._s(quote.company))]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "small text-muted" }, [
-                      _vm._v(_vm._s(quote.address))
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("td", [
-                    _c("div", [_vm._v(_vm._s(quote.name))]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "small text-muted" }, [
-                      _vm._v(
-                        "\n              " +
-                          _vm._s(quote.email) +
-                          "\n            "
-                      )
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("td", { staticClass: "d-none d-sm-table-cell" }, [
-                    quote.phone
-                      ? _c("div", { staticClass: "small" }, [
-                          _vm._v(_vm._s(quote.phone))
-                        ])
-                      : _vm._e(),
-                    _vm._v(" "),
-                    quote.cellphone
-                      ? _c("div", { staticClass: "small" }, [
-                          _vm._v(_vm._s(quote.cellphone))
-                        ])
-                      : _vm._e()
-                  ]),
-                  _vm._v(" "),
-                  _vm._m(1, true)
-                ]
+                  _c("FunctionalCalendar", {
+                    ref: "Calendar",
+                    attrs: {
+                      "is-date-range": true,
+                      "is-modal": true,
+                      "is-auto-closeable": true,
+                      "date-format": "yyyy-mm-dd"
+                    },
+                    on: { selectedDaysCount: _vm.getQuotes },
+                    model: {
+                      value: _vm.filters.date,
+                      callback: function($$v) {
+                        _vm.$set(_vm.filters, "date", $$v)
+                      },
+                      expression: "filters.date"
+                    }
+                  })
+                ],
+                1
               )
-            })
-          )
-        ]),
-        _vm._v(" "),
-        !_vm.loading && _vm.filters.pagination.total > 0
-          ? _c("div", { staticClass: "row" }, [
-              _c("div", { staticClass: "col pt-2" }, [
-                _vm._v(
-                  "\n        " +
-                    _vm._s(_vm.filters.pagination.from) +
-                    "-" +
-                    _vm._s(_vm.filters.pagination.to) +
-                    " of " +
-                    _vm._s(_vm.filters.pagination.total) +
-                    "\n      "
-                )
-              ]),
-              _vm._v(" "),
-              _vm.filters.pagination.last_page > 1
-                ? _c("div", { staticClass: "col" }, [
-                    _c("nav", { attrs: { "aria-label": "Page navigation" } }, [
-                      _c(
-                        "ul",
-                        { staticClass: "pagination justify-content-end" },
-                        [
-                          _c(
-                            "li",
-                            {
-                              staticClass: "page-item",
-                              class: {
-                                disabled:
-                                  _vm.filters.pagination.current_page <= 1
-                              }
-                            },
-                            [
-                              _c(
-                                "a",
-                                {
-                                  staticClass: "page-link",
-                                  attrs: { href: "#" },
-                                  on: {
-                                    click: function($event) {
-                                      $event.preventDefault()
-                                      _vm.changePage(
-                                        _vm.filters.pagination.current_page - 1
-                                      )
-                                    }
-                                  }
-                                },
-                                [_c("i", { staticClass: "fas fa-angle-left" })]
-                              )
-                            ]
-                          ),
-                          _vm._v(" "),
-                          _vm._l(_vm.filters.pagination.last_page, function(
-                            page
-                          ) {
-                            return _c(
-                              "li",
-                              {
-                                staticClass: "page-item",
-                                class: {
-                                  active:
-                                    _vm.filters.pagination.current_page == page
-                                }
-                              },
-                              [
-                                _vm.filters.pagination.current_page == page
-                                  ? _c("span", { staticClass: "page-link" }, [
-                                      _vm._v(_vm._s(page))
-                                    ])
-                                  : _c(
-                                      "a",
-                                      {
-                                        staticClass: "page-link",
-                                        attrs: { href: "#" },
-                                        on: {
-                                          click: function($event) {
-                                            $event.preventDefault()
-                                            _vm.changePage(page)
-                                          }
-                                        }
-                                      },
-                                      [_vm._v(_vm._s(page))]
-                                    )
-                              ]
-                            )
-                          }),
-                          _vm._v(" "),
-                          _c(
-                            "li",
-                            {
-                              staticClass: "page-item",
-                              class: {
-                                disabled:
-                                  _vm.filters.pagination.current_page >=
-                                  _vm.filters.pagination.last_page
-                              }
-                            },
-                            [
-                              _c(
-                                "a",
-                                {
-                                  staticClass: "page-link",
-                                  attrs: { href: "#" },
-                                  on: {
-                                    click: function($event) {
-                                      $event.preventDefault()
-                                      _vm.changePage(
-                                        _vm.filters.pagination.current_page + 1
-                                      )
-                                    }
-                                  }
-                                },
-                                [_c("i", { staticClass: "fas fa-angle-right" })]
-                              )
-                            ]
-                          )
-                        ],
-                        2
-                      )
-                    ])
-                  ])
-                : _vm._e()
             ])
-          : _vm._e(),
+          ]
+        ),
+        _vm._v(" "),
+        _c("div", { staticClass: "table-responsive mt-2" }, [
+          _c("table", { staticClass: "table table-hover" }, [
+            _c("thead", [
+              _c("tr", [
+                _c("th", { staticClass: "d-none d-sm-table-cell" }, [
+                  _c(
+                    "a",
+                    {
+                      staticClass: "text-dark",
+                      attrs: { href: "#" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          _vm.sort("id")
+                        }
+                      }
+                    },
+                    [_vm._v("ID")]
+                  ),
+                  _vm._v(" "),
+                  _c("i", {
+                    staticClass: "mr-1 fas",
+                    class: {
+                      "fa-long-arrow-alt-down":
+                        _vm.filters.orderBy.column == "id" &&
+                        _vm.filters.orderBy.direction == "asc",
+                      "fa-long-arrow-alt-up":
+                        _vm.filters.orderBy.column == "id" &&
+                        _vm.filters.orderBy.direction == "desc"
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c("th", [
+                  _c(
+                    "a",
+                    {
+                      staticClass: "text-dark",
+                      attrs: { href: "#" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          _vm.sort("company")
+                        }
+                      }
+                    },
+                    [_vm._v("Empresa")]
+                  ),
+                  _vm._v(" "),
+                  _c("i", {
+                    staticClass: "mr-1 fas",
+                    class: {
+                      "fa-long-arrow-alt-down":
+                        _vm.filters.orderBy.column == "company" &&
+                        _vm.filters.orderBy.direction == "asc",
+                      "fa-long-arrow-alt-up":
+                        _vm.filters.orderBy.column == "company" &&
+                        _vm.filters.orderBy.direction == "desc"
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c("th", [
+                  _c(
+                    "a",
+                    {
+                      staticClass: "text-dark",
+                      attrs: { href: "#" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          _vm.sort("name")
+                        }
+                      }
+                    },
+                    [_vm._v("Contacto")]
+                  ),
+                  _vm._v(" "),
+                  _c("i", {
+                    staticClass: "mr-1 fas",
+                    class: {
+                      "fa-long-arrow-alt-down":
+                        _vm.filters.orderBy.column == "name" &&
+                        _vm.filters.orderBy.direction == "asc",
+                      "fa-long-arrow-alt-up":
+                        _vm.filters.orderBy.column == "name" &&
+                        _vm.filters.orderBy.direction == "desc"
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c("th", [_vm._v("\n            Teléfonos\n          ")]),
+                _vm._v(" "),
+                _c("th", { staticClass: "d-none d-sm-table-cell" })
+              ])
+            ]),
+            _vm._v(" "),
+            _c(
+              "tbody",
+              _vm._l(_vm.quotes, function(quote) {
+                return _c(
+                  "tr",
+                  {
+                    on: {
+                      click: function($event) {
+                        _vm.editQuote(quote.id)
+                      }
+                    }
+                  },
+                  [
+                    _c("td", { staticClass: "d-none d-sm-table-cell" }, [
+                      _vm._v(_vm._s(quote.id))
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _c("div", [_vm._v(_vm._s(quote.company))]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "small text-muted" }, [
+                        _vm._v(_vm._s(quote.address))
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _c("div", [_vm._v(_vm._s(quote.name))]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "small text-muted" }, [
+                        _vm._v(
+                          "\n              " +
+                            _vm._s(quote.email) +
+                            "\n            "
+                        )
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      quote.phone
+                        ? _c("div", { staticClass: "small" }, [
+                            _vm._v(_vm._s(quote.phone))
+                          ])
+                        : _vm._e(),
+                      _vm._v(" "),
+                      quote.cellphone
+                        ? _c("div", { staticClass: "small" }, [
+                            _vm._v(_vm._s(quote.cellphone))
+                          ])
+                        : _vm._e()
+                    ]),
+                    _vm._v(" "),
+                    _vm._m(1, true)
+                  ]
+                )
+              })
+            )
+          ])
+        ]),
         _vm._v(" "),
         !_vm.loading && !_vm.quotes.length > 0
           ? _c("div", { staticClass: "no-items-found text-center mt-5" }, [
@@ -71296,7 +71395,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       filtersShow: true,
       filters: {
         agentId: null,
-        date: {},
+        date: {
+          dateRange: {}
+        },
         // pagination: {
         //   from: 0,
         //   to: 0,
@@ -71367,7 +71468,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.loading = true;
       this.quotes = [];
 
-      if (this.userCurrent.id > 0) {
+      if (this.userCurrent) {
         this.filters.agentId = this.userCurrent.id;
       } else {
         this.filters.agentId = null;
@@ -71423,7 +71524,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.getQuotes();
     },
     removeAgent: function removeAgent() {
-      this.userCurrent.id = 0;
+      this.userCurrent = {};
       this.getQuotes();
     },
     filter: function filter() {
@@ -75749,48 +75850,14 @@ if (false) {
 
 /***/ }),
 /* 126 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 127 */,
-/* 128 */,
-/* 129 */,
-/* 130 */,
-/* 131 */,
-/* 132 */,
-/* 133 */,
-/* 134 */,
-/* 135 */,
-/* 136 */,
-/* 137 */,
-/* 138 */,
-/* 139 */,
-/* 140 */,
-/* 141 */,
-/* 142 */,
-/* 143 */,
-/* 144 */,
-/* 145 */,
-/* 146 */,
-/* 147 */,
-/* 148 */,
-/* 149 */,
-/* 150 */,
-/* 151 */,
-/* 152 */,
-/* 153 */,
-/* 154 */,
-/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(0)
 /* script */
-var __vue_script__ = __webpack_require__(156)
+var __vue_script__ = __webpack_require__(127)
 /* template */
-var __vue_template__ = __webpack_require__(157)
+var __vue_template__ = __webpack_require__(128)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -75829,7 +75896,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 156 */
+/* 127 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -75861,7 +75928,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 157 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -75883,6 +75950,12 @@ if (false) {
     require("vue-hot-reload-api")      .rerender("data-v-eb031206", module.exports)
   }
 }
+
+/***/ }),
+/* 129 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
 
 /***/ })
 /******/ ]);

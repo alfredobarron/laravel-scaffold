@@ -2,14 +2,14 @@
 
 namespace App\Exports;
 
-use App\Models\Quotes\Quotes;
+use App\QuotesCompany;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
 
-class QuotesExport implements FromArray, WithHeadings, ShouldAutoSize, WithEvents
+class QuotesCompaniesExport implements FromArray, WithHeadings, ShouldAutoSize, WithEvents
 {
     protected $quotes;
 
@@ -26,15 +26,15 @@ class QuotesExport implements FromArray, WithHeadings, ShouldAutoSize, WithEvent
     public function headings(): array
     {
         return [
+            'Id',
             'Fecha',
-            'Lugar',
-            'Cliente',
-            'Telefono',
-            'Artista',
-            'Costo',
+            'Empresa',
+            'Dirección',
+            'Nombre de contacto',
+            'Correo electrónico',
+            'Teléfono',
+            'Celular',
             'Vendedor',
-            'Procedencia',
-            'Estatus',
             'Comentarios',
         ];
     }

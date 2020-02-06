@@ -69,6 +69,7 @@ Vue.component('events-index', require('./components/events/Index.vue'));
 Vue.component('quotes-companies-index', require('./components/quotesCompanies/Index.vue'));
 Vue.component('quotes-companies-create', require('./components/quotesCompanies/Create.vue'));
 Vue.component('quotes-companies-edit', require('./components/quotesCompanies/Edit.vue'));
+//Vue.component('quotes-companies-count-pendientes', require('./components/quotes/CountPendientes.vue'));
 
 // Quotes
 Vue.component('quotes-index', require('./components/quotes/Index.vue'));

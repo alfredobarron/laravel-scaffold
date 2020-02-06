@@ -23,7 +23,7 @@ class QuotesController extends Controller
             $query->where('artist_id', $request->artist['id']);
         }
 
-        if ($request->date) {
+        if ($request->date['dateRange']) {
             $ds = Carbon::parse($request->date['dateRange']['start']['date']);
             $de = Carbon::parse($request->date['dateRange']['end']['date']);
             $query->whereBetween('date', [$ds, $de]);
@@ -206,8 +206,11 @@ class QuotesController extends Controller
         $quotes = $this->filter($request);
 
         foreach ($quotes as $key => $value) {
+
+            $dt = Carbon::parse($value->date);
+
             $data[] = [
-                $value->date,
+                $dt->toFormattedDateString(),
                 $value->place,
                 $value->client,
                 $value->client_phone,

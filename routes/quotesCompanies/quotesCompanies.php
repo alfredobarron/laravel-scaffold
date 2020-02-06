@@ -11,8 +11,10 @@ Route::middleware('auth')->group(function () {
         // api
         Route::group(['prefix' => 'api/quotesCompanies'], function() {
             Route::post('/filter', 'QuotesCompaniesController@filter')->middleware('permission:read-quotescompanies');
-            Route::get('/byCreator', 'QuotesCompaniesController@byCreator')->middleware('permission:read-quotescompanies');
-            Route::get('/all', 'QuotesCompaniesController@all')->middleware('permission:read-quotescompanies');
+            // Route::get('/byCreator', 'QuotesCompaniesController@byCreator')->middleware('permission:read-quotescompanies');
+            // Route::get('/all', 'QuotesCompaniesController@all')->middleware('permission:read-quotescompanies');
+            // Route::post('/countPendientes', 'QuotesCompaniesController@countPendientes')->middleware('permission:read-quotescompanies');
+            Route::post('/export', 'QuotesCompaniesController@export')->middleware('permission:read-quotescompanies');
 
             Route::get('/{quote}', 'QuotesCompaniesController@show')->middleware('permission:read-quotescompanies');
             Route::post('/store', 'QuotesCompaniesController@store')->middleware('permission:create-quotescompanies');

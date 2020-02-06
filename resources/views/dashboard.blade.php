@@ -47,6 +47,7 @@
                             <i class="far fa-file bg-info p-4 font-2xl mr-3"></i>
                             <div>
                                 <div class="text-value-sm text-info">Cotizaciones Empresa</div>
+                                <!-- <quotes-companies-count-pendientes></quotes-companies-count-pendientes> -->
                             </div>
                         </div>
                     </div>
